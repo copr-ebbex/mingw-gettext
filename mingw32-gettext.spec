@@ -6,7 +6,7 @@
 
 Name:      mingw32-gettext
 Version:   0.17
-Release:   7%{?dist}
+Release:   8%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -68,12 +68,14 @@ rm -f $RPM_BUILD_ROOT%{_mingw32_datadir}/info/dir
 rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man1/
 rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man3/
 
+%find_lang %{name} --all-name
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root)
 %doc COPYING
 %{_mingw32_bindir}/autopoint
@@ -121,11 +123,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_datadir}/info/autosprintf.info
 %{_mingw32_datadir}/info/gettext.info
 
-%{_mingw32_datadir}/locale/*/LC_MESSAGES/gettext-tools.mo
-%{_mingw32_datadir}/locale/*/LC_MESSAGES/gettext-runtime.mo
-
 
 %changelog
+* Fri Jan 23 2009 Richard W.M. Jones <rjones@redhat.com> - 0.17-8
+- Use find_lang macro.
+
 * Fri Jan 16 2009 Richard W.M. Jones <rjones@redhat.com> - 0.17-7
 - Remove the manpages - already available in base Fedora gettext-devel.
 - Use _smp_mflags for build.
