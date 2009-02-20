@@ -6,7 +6,7 @@
 
 Name:      mingw32-gettext
 Version:   0.17
-Release:   8%{?dist}
+Release:   9%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -19,7 +19,7 @@ Patch0:    mingw32-gettext-0.17-gnulib-optarg-symbols.patch
 
 BuildArch: noarch
 
-BuildRequires: mingw32-filesystem >= 23
+BuildRequires:  mingw32-filesystem >= 49
 BuildRequires: mingw32-runtime >= 3.15.1
 BuildRequires: mingw32-gcc
 BuildRequires: mingw32-gcc-c++
@@ -125,6 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Feb 20 2009 Richard W.M. Jones <rjones@redhat.com> - 0.17-9
+- Rebuild for mingw32-gcc 4.4
+
 * Fri Jan 23 2009 Richard W.M. Jones <rjones@redhat.com> - 0.17-8
 - Use find_lang macro.
 
