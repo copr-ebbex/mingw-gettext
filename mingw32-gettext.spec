@@ -6,7 +6,7 @@
 
 Name:      mingw32-gettext
 Version:   0.17
-Release:   9%{?dist}
+Release:   10%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -125,6 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.17-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Fri Feb 20 2009 Richard W.M. Jones <rjones@redhat.com> - 0.17-9
 - Rebuild for mingw32-gcc 4.4
 
