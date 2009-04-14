@@ -6,7 +6,7 @@
 
 Name:      mingw32-gettext
 Version:   0.17
-Release:   10%{?dist}
+Release:   11%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -39,6 +39,15 @@ BuildRequires: mingw32-termcap >= 1.3.1-3
 MinGW Windows Gettext library
 
 
+%package static
+Summary:        Static version of the MinGW Windows Gettext library
+Requires:       %{name} = %{version}-%{release}
+Group:          Development/Libraries
+
+%description static
+Static version of the MinGW Windows Gettext library.
+
+
 %prep
 %setup -q -n gettext-%{version}
 
@@ -50,7 +59,7 @@ MinGW Windows Gettext library
   --disable-java \
   --disable-native-java \
   --disable-csharp \
-  --disable-static \
+  --enable-static \
   --enable-threads=win32 \
   --without-emacs
 make %{?_smp_mflags}
@@ -123,8 +132,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_datadir}/info/autosprintf.info
 %{_mingw32_datadir}/info/gettext.info
 
+%files static
+%defattr(-,root,root,-)
+%{_mingw32_libdir}/libasprintf.a
+%{_mingw32_libdir}/libgettextpo.a
+%{_mingw32_libdir}/libintl.a
+
 
 %changelog
+* Fri Apr  3 2009 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.17-11
+- Added -static subpackage
+
 * Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.17-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
