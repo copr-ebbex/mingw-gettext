@@ -6,7 +6,7 @@
 
 Name:      mingw32-gettext
 Version:   0.17
-Release:   12%{?dist}
+Release:   13%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -15,11 +15,16 @@ URL:       http://www.gnu.org/software/gettext/
 Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+# Proxy-libintl
+# See http://www.gtk.org/download-windows.html for more details
+Source1:   libintl.c
+Source2:   libintl.h
+
 Patch0:    mingw32-gettext-0.17-gnulib-optarg-symbols.patch
 
 BuildArch: noarch
 
-BuildRequires:  mingw32-filesystem >= 49
+BuildRequires: mingw32-filesystem >= 49
 BuildRequires: mingw32-runtime >= 3.15.1
 BuildRequires: mingw32-gcc
 BuildRequires: mingw32-gcc-c++
@@ -55,6 +60,12 @@ Static version of the MinGW Windows Gettext library.
 
 
 %build
+# Build proxy-libintl manually
+cp %{SOURCE1} .
+cp %{SOURCE2} .
+%{_mingw32_cc} -c libintl.c -o libintl.o -I.
+%{_mingw32_ar} rc libintl.a libintl.o
+
 %{_mingw32_configure} \
   --disable-java \
   --disable-native-java \
@@ -76,6 +87,13 @@ rm -f $RPM_BUILD_ROOT%{_mingw32_datadir}/info/dir
 # Remove man pages, these are available in base gettext-devel.
 rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man1/
 rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man3/
+
+# Install the proxy-libintl pieces
+rm -f $RPM_BUILD_ROOT%{_mingw32_libdir}/libintl.la
+rm -f $RPM_BUILD_ROOT%{_mingw32_libdir}/libintl.dll.a
+install -m 0644 intl_win32/libintl.a $RPM_BUILD_ROOT%{_mingw32_libdir}/
+rm -f $RPM_BUILD_ROOT%{_mingw32_includedir}/libintl.h
+install -m 0644 libintl.h $RPM_BUILD_ROOT%{_mingw32_includedir}/
 
 %find_lang %{name} --all-name
 
@@ -120,8 +138,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_libdir}/libgettextsrc.dll.a
 %{_mingw32_libdir}/libgettextsrc.la
 
-%{_mingw32_libdir}/libintl.dll.a
-%{_mingw32_libdir}/libintl.la
+# This isn't really a static library, but a small wrapper library
+# which adds the ability to have a soft dependency on libintl-8.dll
+%{_mingw32_libdir}/libintl.a
 
 %{_mingw32_docdir}/gettext
 %{_mingw32_docdir}/libasprintf/autosprintf_all.html
@@ -136,10 +155,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_mingw32_libdir}/libasprintf.a
 %{_mingw32_libdir}/libgettextpo.a
-%{_mingw32_libdir}/libintl.a
 
 
 %changelog
+* Sat Oct 16 2010 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.17-13
+- Replaced the libintl import library with a small wrapper library in order
+  to let other binaries have a soft-dependency on libintl-8.dll as proposed
+  on the fedora-mingw mailing list
+
 * Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.17-12
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
