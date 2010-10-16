@@ -91,7 +91,7 @@ rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man3/
 # Install the proxy-libintl pieces
 rm -f $RPM_BUILD_ROOT%{_mingw32_libdir}/libintl.la
 rm -f $RPM_BUILD_ROOT%{_mingw32_libdir}/libintl.dll.a
-install -m 0644 intl_win32/libintl.a $RPM_BUILD_ROOT%{_mingw32_libdir}/
+install -m 0644 libintl.a $RPM_BUILD_ROOT%{_mingw32_libdir}/
 rm -f $RPM_BUILD_ROOT%{_mingw32_includedir}/libintl.h
 install -m 0644 libintl.h $RPM_BUILD_ROOT%{_mingw32_includedir}/
 
