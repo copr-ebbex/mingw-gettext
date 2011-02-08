@@ -6,7 +6,7 @@
 
 Name:      mingw32-gettext
 Version:   0.17
-Release:   13%{?dist}
+Release:   14%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -158,6 +158,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.17-14
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Sat Oct 16 2010 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.17-13
 - Replaced the libintl import library with a small wrapper library in order
   to let other binaries have a soft-dependency on libintl-8.dll as proposed
