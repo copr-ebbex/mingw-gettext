@@ -1,5 +1,6 @@
 %define __strip %{_mingw32_strip}
 %define __objdump %{_mingw32_objdump}
+%define __debug_install_post %{_mingw32_debug_install_post}
 
 Name:      mingw32-gettext
 Version:   0.18.1.1
@@ -40,6 +41,9 @@ Group:          Development/Libraries
 
 %description static
 Static version of the MinGW Windows Gettext library.
+
+
+%{?_mingw32_debug_package}
 
 
 %prep
@@ -125,6 +129,7 @@ rm -rf $RPM_BUILD_ROOT%{_mingw32_datadir}/info/
 * Mon May 23 2011 Kalev Lember <kalev@smartlink.ee> - 0.18.1.1-1
 - Update to 0.18.1.1
 - Spec cleanup
+- Split debug symbols in -debuginfo subpackage
 
 * Mon May 23 2011 Kalev Lember <kalev@smartlink.ee> - 0.17-16
 - Removed html documentation and info pages
