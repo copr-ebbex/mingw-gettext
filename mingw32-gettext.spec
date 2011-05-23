@@ -5,8 +5,8 @@
 %define __find_provides %{_mingw32_findprovides}
 
 Name:      mingw32-gettext
-Version:   0.17
-Release:   16%{?dist}
+Version:   0.18.1.1
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -14,8 +14,6 @@ Group:     Development/Libraries
 URL:       http://www.gnu.org/software/gettext/
 Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
-Patch0:    mingw32-gettext-0.17-gnulib-optarg-symbols.patch
 
 BuildArch: noarch
 
@@ -51,10 +49,9 @@ Static version of the MinGW Windows Gettext library.
 %prep
 %setup -q -n gettext-%{version}
 
-%patch0 -p1
-
 
 %build
+echo "gl_cv_func_memchr_works='yes'" >> %{_mingw32_cache}
 %{_mingw32_configure} \
   --disable-java \
   --disable-native-java \
@@ -95,9 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_bindir}/gettext.sh
 %{_mingw32_bindir}/gettextize
 %{_mingw32_bindir}/libasprintf-0.dll
-%{_mingw32_bindir}/libgettextlib-0-17.dll
+%{_mingw32_bindir}/libgettextlib-0-18-1.dll
 %{_mingw32_bindir}/libgettextpo-0.dll
-%{_mingw32_bindir}/libgettextsrc-0-17.dll
+%{_mingw32_bindir}/libgettextsrc-0-18-1.dll
 %{_mingw32_bindir}/libintl-8.dll
 %{_mingw32_bindir}/msg*.exe
 %{_mingw32_bindir}/ngettext.exe
@@ -137,6 +134,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon May 23 2011 Kalev Lember <kalev@smartlink.ee> - 0.18.1.1-1
+- Update to 0.18.1.1
+
 * Mon May 23 2011 Kalev Lember <kalev@smartlink.ee> - 0.17-16
 - Removed html documentation and info pages
 
