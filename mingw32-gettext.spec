@@ -6,7 +6,7 @@
 
 Name:      mingw32-gettext
 Version:   0.17
-Release:   15%{?dist}
+Release:   16%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -71,11 +71,13 @@ rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
 rm -f $RPM_BUILD_ROOT%{_mingw32_datadir}/locale/locale.alias
 rm -f $RPM_BUILD_ROOT%{_mingw32_libdir}/charset.alias
-rm -f $RPM_BUILD_ROOT%{_mingw32_datadir}/info/dir
 
-# Remove man pages, these are available in base gettext-devel.
+# Remove documentation - already available in base gettext-devel.
 rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man1/
 rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man3/
+rm -rf $RPM_BUILD_ROOT%{_mingw32_docdir}/gettext/
+rm -rf $RPM_BUILD_ROOT%{_mingw32_docdir}/libasprintf/
+rm -rf $RPM_BUILD_ROOT%{_mingw32_datadir}/info/
 
 %find_lang %{name} --all-name
 
@@ -123,14 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mingw32_libdir}/libintl.dll.a
 %{_mingw32_libdir}/libintl.la
 
-%{_mingw32_docdir}/gettext
-%{_mingw32_docdir}/libasprintf/autosprintf_all.html
-
 %{_mingw32_datadir}/gettext/
 
 %{_mingw32_datadir}/aclocal/*m4
-%{_mingw32_datadir}/info/autosprintf.info
-%{_mingw32_datadir}/info/gettext.info
 
 %files static
 %defattr(-,root,root,-)
@@ -140,6 +137,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon May 23 2011 Kalev Lember <kalev@smartlink.ee> - 0.17-16
+- Removed html documentation and info pages
+
 * Wed Apr 27 2011 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.17.15
 - Dropped the proxy-libintl pieces as the upstream gtk+ win32 maintainers
   also decided to drop it and it's causing more harm than good
