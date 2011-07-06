@@ -4,7 +4,7 @@
 
 Name:      mingw32-gettext
 Version:   0.18.1.1
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -19,7 +19,7 @@ BuildRequires: mingw32-runtime >= 3.15.1
 BuildRequires: mingw32-gcc
 BuildRequires: mingw32-gcc-c++
 BuildRequires: mingw32-binutils
-BuildRequires: mingw32-iconv
+BuildRequires: mingw32-win-iconv
 BuildRequires: mingw32-termcap >= 1.3.1-3
 
 # Possible extra BRs.  These are used if available, but
@@ -126,6 +126,9 @@ rm -rf $RPM_BUILD_ROOT%{_mingw32_datadir}/info/
 
 
 %changelog
+* Wed Jul  6 2011 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-2
+- Rebuild against win-iconv
+
 * Mon May 23 2011 Kalev Lember <kalev@smartlink.ee> - 0.18.1.1-1
 - Update to 0.18.1.1
 - Spec cleanup
