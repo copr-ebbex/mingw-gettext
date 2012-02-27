@@ -4,7 +4,7 @@
 
 Name:      mingw32-gettext
 Version:   0.18.1.1
-Release:   4%{?dist}
+Release:   5%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -126,6 +126,9 @@ rm -rf $RPM_BUILD_ROOT%{_mingw32_datadir}/info/
 
 
 %changelog
+* Mon Feb 27 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-5
+- Rebuild against the mingw-w64 toolchain
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.18.1.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
