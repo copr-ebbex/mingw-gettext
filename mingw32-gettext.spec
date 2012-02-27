@@ -12,6 +12,9 @@ Group:     Development/Libraries
 URL:       http://www.gnu.org/software/gettext/
 Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.gz
 
+# Fix compatibility with mingw-w64
+Patch0:    gettext-0.18.1.1-tml.patch
+
 BuildArch: noarch
 
 BuildRequires: mingw32-filesystem >= 68
@@ -48,10 +51,13 @@ Static version of the MinGW Windows Gettext library.
 
 %prep
 %setup -q -n gettext-%{version}
+%patch0 -p0
 
 
 %build
-echo "gl_cv_func_memchr_works='yes'" >> %{_mingw32_cache}
+# Some build workarounds
+export gl_cv_func_memchr_works="yes"
+export ac_cv_func_strnlen_working="yes"
 %{_mingw32_configure} \
   --disable-java \
   --disable-native-java \
@@ -128,6 +134,7 @@ rm -rf $RPM_BUILD_ROOT%{_mingw32_datadir}/info/
 %changelog
 * Mon Feb 27 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-5
 - Rebuild against the mingw-w64 toolchain
+- Added a patch to fix compatibility with mingw-w64
 
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.18.1.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
