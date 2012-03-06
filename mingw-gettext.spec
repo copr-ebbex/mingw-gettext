@@ -1,6 +1,6 @@
-%define __strip %{_mingw32_strip}
-%define __objdump %{_mingw32_objdump}
-%define __debug_install_post %{_mingw32_debug_install_post}
+%define __strip %{mingw32_strip}
+%define __objdump %{mingw32_objdump}
+%define __debug_install_post %{mingw32_debug_install_post}
 
 Name:      mingw-gettext
 Version:   0.18.1.1
@@ -52,7 +52,7 @@ Group:          Development/Libraries
 Static version of the MinGW Windows Gettext library.
 
 
-%{?_mingw32_debug_package}
+%{?mingw32_debug_package}
 
 
 %prep
@@ -64,7 +64,7 @@ Static version of the MinGW Windows Gettext library.
 # Some build workarounds
 export gl_cv_func_memchr_works="yes"
 export ac_cv_func_strnlen_working="yes"
-%{_mingw32_configure} \
+%{mingw32_configure} \
   --disable-java \
   --disable-native-java \
   --disable-csharp \
@@ -76,70 +76,71 @@ make %{?_smp_mflags}
 
 %install
 make DESTDIR=$RPM_BUILD_ROOT install
-rm -f $RPM_BUILD_ROOT%{_mingw32_datadir}/locale/locale.alias
-rm -f $RPM_BUILD_ROOT%{_mingw32_libdir}/charset.alias
+rm -f $RPM_BUILD_ROOT%{mingw32_datadir}/locale/locale.alias
+rm -f $RPM_BUILD_ROOT%{mingw32_libdir}/charset.alias
 
 # Remove documentation - already available in base gettext-devel.
-rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man1/
-rm -rf $RPM_BUILD_ROOT%{_mingw32_mandir}/man3/
-rm -rf $RPM_BUILD_ROOT%{_mingw32_docdir}/gettext/
-rm -rf $RPM_BUILD_ROOT%{_mingw32_docdir}/libasprintf/
-rm -rf $RPM_BUILD_ROOT%{_mingw32_datadir}/info/
+rm -rf $RPM_BUILD_ROOT%{mingw32_mandir}/man1/
+rm -rf $RPM_BUILD_ROOT%{mingw32_mandir}/man3/
+rm -rf $RPM_BUILD_ROOT%{mingw32_docdir}/gettext/
+rm -rf $RPM_BUILD_ROOT%{mingw32_docdir}/libasprintf/
+rm -rf $RPM_BUILD_ROOT%{mingw32_datadir}/info/
 
 %find_lang %{name} --all-name
 
 
 %files -n mingw32-gettext -f %{name}.lang
 %doc COPYING
-%{_mingw32_bindir}/autopoint
-%{_mingw32_bindir}/envsubst.exe
-%{_mingw32_bindir}/gettext.exe
-%{_mingw32_bindir}/gettext.sh
-%{_mingw32_bindir}/gettextize
-%{_mingw32_bindir}/libasprintf-0.dll
-%{_mingw32_bindir}/libgettextlib-0-18-1.dll
-%{_mingw32_bindir}/libgettextpo-0.dll
-%{_mingw32_bindir}/libgettextsrc-0-18-1.dll
-%{_mingw32_bindir}/libintl-8.dll
-%{_mingw32_bindir}/msg*.exe
-%{_mingw32_bindir}/ngettext.exe
-%{_mingw32_bindir}/recode-sr-latin.exe
-%{_mingw32_bindir}/xgettext.exe
+%{mingw32_bindir}/autopoint
+%{mingw32_bindir}/envsubst.exe
+%{mingw32_bindir}/gettext.exe
+%{mingw32_bindir}/gettext.sh
+%{mingw32_bindir}/gettextize
+%{mingw32_bindir}/libasprintf-0.dll
+%{mingw32_bindir}/libgettextlib-0-18-1.dll
+%{mingw32_bindir}/libgettextpo-0.dll
+%{mingw32_bindir}/libgettextsrc-0-18-1.dll
+%{mingw32_bindir}/libintl-8.dll
+%{mingw32_bindir}/msg*.exe
+%{mingw32_bindir}/ngettext.exe
+%{mingw32_bindir}/recode-sr-latin.exe
+%{mingw32_bindir}/xgettext.exe
 
-%{_mingw32_includedir}/autosprintf.h
-%{_mingw32_includedir}/gettext-po.h
-%{_mingw32_includedir}/libintl.h
+%{mingw32_includedir}/autosprintf.h
+%{mingw32_includedir}/gettext-po.h
+%{mingw32_includedir}/libintl.h
 
-%{_mingw32_libdir}/gettext
+%{mingw32_libdir}/gettext
 
-%{_mingw32_libdir}/libasprintf.dll.a
-%{_mingw32_libdir}/libasprintf.la
+%{mingw32_libdir}/libasprintf.dll.a
+%{mingw32_libdir}/libasprintf.la
 
-%{_mingw32_libdir}/libgettextlib.dll.a
-%{_mingw32_libdir}/libgettextlib.la
+%{mingw32_libdir}/libgettextlib.dll.a
+%{mingw32_libdir}/libgettextlib.la
 
-%{_mingw32_libdir}/libgettextpo.dll.a
-%{_mingw32_libdir}/libgettextpo.la
+%{mingw32_libdir}/libgettextpo.dll.a
+%{mingw32_libdir}/libgettextpo.la
 
-%{_mingw32_libdir}/libgettextsrc.dll.a
-%{_mingw32_libdir}/libgettextsrc.la
+%{mingw32_libdir}/libgettextsrc.dll.a
+%{mingw32_libdir}/libgettextsrc.la
 
-%{_mingw32_libdir}/libintl.dll.a
-%{_mingw32_libdir}/libintl.la
+%{mingw32_libdir}/libintl.dll.a
+%{mingw32_libdir}/libintl.la
 
-%{_mingw32_datadir}/gettext/
+%{mingw32_datadir}/gettext/
 
-%{_mingw32_datadir}/aclocal/*m4
+%{mingw32_datadir}/aclocal/*m4
 
 %files -n mingw32-gettext-static
-%{_mingw32_libdir}/libasprintf.a
-%{_mingw32_libdir}/libgettextpo.a
-%{_mingw32_libdir}/libintl.a
+%{mingw32_libdir}/libasprintf.a
+%{mingw32_libdir}/libgettextpo.a
+%{mingw32_libdir}/libintl.a
 
 
 %changelog
 * Tue Mar 06 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-6
-- Renamed the source package to mingw-gettext (RHBZ #xxxx)
+- Renamed the source package to mingw-gettext (RHBZ #800387)
+- Use mingw macros without leading underscore
 
 * Mon Feb 27 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-5
 - Rebuild against the mingw-w64 toolchain
