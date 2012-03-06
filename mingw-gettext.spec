@@ -2,9 +2,9 @@
 %define __objdump %{_mingw32_objdump}
 %define __debug_install_post %{_mingw32_debug_install_post}
 
-Name:      mingw32-gettext
+Name:      mingw-gettext
 Version:   0.18.1.1
-Release:   5%{?dist}
+Release:   6%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -37,12 +37,18 @@ BuildRequires: mingw32-termcap >= 1.3.1-3
 MinGW Windows Gettext library
 
 
-%package static
+%package -n mingw32-gettext
+Summary:         GNU libraries and utilities for producing multi-lingual messages
+
+%description -n mingw32-gettext
+MinGW Windows Gettext library
+
+%package -n mingw32-gettext-static
 Summary:        Static version of the MinGW Windows Gettext library
-Requires:       %{name} = %{version}-%{release}
+Requires:       mingw32-gettext = %{version}-%{release}
 Group:          Development/Libraries
 
-%description static
+%description -n mingw32-gettext-static
 Static version of the MinGW Windows Gettext library.
 
 
@@ -83,7 +89,7 @@ rm -rf $RPM_BUILD_ROOT%{_mingw32_datadir}/info/
 %find_lang %{name} --all-name
 
 
-%files -f %{name}.lang
+%files -n mingw32-gettext -f %{name}.lang
 %doc COPYING
 %{_mingw32_bindir}/autopoint
 %{_mingw32_bindir}/envsubst.exe
@@ -125,13 +131,16 @@ rm -rf $RPM_BUILD_ROOT%{_mingw32_datadir}/info/
 
 %{_mingw32_datadir}/aclocal/*m4
 
-%files static
+%files -n mingw32-gettext-static
 %{_mingw32_libdir}/libasprintf.a
 %{_mingw32_libdir}/libgettextpo.a
 %{_mingw32_libdir}/libintl.a
 
 
 %changelog
+* Tue Mar 06 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-6
+- Renamed the source package to mingw-gettext (RHBZ #xxxx)
+
 * Mon Feb 27 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-5
 - Rebuild against the mingw-w64 toolchain
 - Added a patch to fix compatibility with mingw-w64
