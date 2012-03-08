@@ -4,7 +4,7 @@
 
 Name:      mingw-gettext
 Version:   0.18.1.1
-Release:   6%{?dist}
+Release:   7%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -86,6 +86,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw32_docdir}/gettext/
 rm -rf $RPM_BUILD_ROOT%{mingw32_docdir}/libasprintf/
 rm -rf $RPM_BUILD_ROOT%{mingw32_datadir}/info/
 
+# Drop all .la files
+find $RPM_BUILD_ROOT -name "*.la" -delete
+
 %find_lang %{name} --all-name
 
 
@@ -105,30 +108,16 @@ rm -rf $RPM_BUILD_ROOT%{mingw32_datadir}/info/
 %{mingw32_bindir}/ngettext.exe
 %{mingw32_bindir}/recode-sr-latin.exe
 %{mingw32_bindir}/xgettext.exe
-
 %{mingw32_includedir}/autosprintf.h
 %{mingw32_includedir}/gettext-po.h
 %{mingw32_includedir}/libintl.h
-
 %{mingw32_libdir}/gettext
-
 %{mingw32_libdir}/libasprintf.dll.a
-%{mingw32_libdir}/libasprintf.la
-
 %{mingw32_libdir}/libgettextlib.dll.a
-%{mingw32_libdir}/libgettextlib.la
-
 %{mingw32_libdir}/libgettextpo.dll.a
-%{mingw32_libdir}/libgettextpo.la
-
 %{mingw32_libdir}/libgettextsrc.dll.a
-%{mingw32_libdir}/libgettextsrc.la
-
 %{mingw32_libdir}/libintl.dll.a
-%{mingw32_libdir}/libintl.la
-
 %{mingw32_datadir}/gettext/
-
 %{mingw32_datadir}/aclocal/*m4
 
 %files -n mingw32-gettext-static
@@ -138,6 +127,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw32_datadir}/info/
 
 
 %changelog
+* Thu Mar 08 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-7
+- Dropped .la files
+
 * Tue Mar 06 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-6
 - Renamed the source package to mingw-gettext (RHBZ #800387)
 - Use mingw macros without leading underscore
