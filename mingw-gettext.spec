@@ -1,10 +1,11 @@
-%define __strip %{mingw32_strip}
-%define __objdump %{mingw32_objdump}
-%define __debug_install_post %{mingw32_debug_install_post}
+%?mingw_package_header
+
+%global mingw_build_win32 1
+%global mingw_build_win64 1
 
 Name:      mingw-gettext
 Version:   0.18.1.1
-Release:   7%{?dist}
+Release:   8%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -17,13 +18,22 @@ Patch0:    gettext-0.18.1.1-tml.patch
 
 BuildArch: noarch
 
-BuildRequires: mingw32-filesystem >= 68
-BuildRequires: mingw32-runtime >= 3.15.1
+BuildRequires: mingw32-filesystem >= 95
 BuildRequires: mingw32-gcc
 BuildRequires: mingw32-gcc-c++
 BuildRequires: mingw32-binutils
 BuildRequires: mingw32-win-iconv
-BuildRequires: mingw32-termcap >= 1.3.1-3
+BuildRequires: mingw32-termcap
+
+BuildRequires: mingw64-filesystem >= 95
+BuildRequires: mingw64-gcc
+BuildRequires: mingw64-gcc-c++
+BuildRequires: mingw64-binutils
+BuildRequires: mingw64-win-iconv
+BuildRequires: mingw64-termcap
+
+# The libtool bundled with this package is too old for win64 support
+BuildRequires: autoconf automake libtool
 
 # Possible extra BRs.  These are used if available, but
 # not required just for building.
@@ -37,6 +47,7 @@ BuildRequires: mingw32-termcap >= 1.3.1-3
 MinGW Windows Gettext library
 
 
+# Win32
 %package -n mingw32-gettext
 Summary:         GNU libraries and utilities for producing multi-lingual messages
 
@@ -51,40 +62,69 @@ Group:          Development/Libraries
 %description -n mingw32-gettext-static
 Static version of the MinGW Windows Gettext library.
 
+# Win64
+%package -n mingw64-gettext
+Summary:         GNU libraries and utilities for producing multi-lingual messages
 
-%{?mingw32_debug_package}
+%description -n mingw64-gettext
+MinGW Windows Gettext library
+
+%package -n mingw64-gettext-static
+Summary:        Static version of the MinGW Windows Gettext library
+Requires:       mingw64-gettext = %{version}-%{release}
+Group:          Development/Libraries
+
+%description -n mingw64-gettext-static
+Static version of the MinGW Windows Gettext library.
+
+
+%?mingw_debug_package
 
 
 %prep
 %setup -q -n gettext-%{version}
 %patch0 -p0
 
+# The libtool bundled with this package is too old for win64 support
+autoreconf -i --force
+
 
 %build
 # Some build workarounds
 export gl_cv_func_memchr_works="yes"
 export ac_cv_func_strnlen_working="yes"
-%{mingw32_configure} \
-  --disable-java \
-  --disable-native-java \
-  --disable-csharp \
-  --enable-static \
-  --enable-threads=win32 \
-  --without-emacs
-make %{?_smp_mflags}
+%mingw_configure            \
+    --disable-java          \
+    --disable-native-java   \
+    --disable-csharp        \
+    --enable-static         \
+    --enable-threads=win32  \
+    --without-emacs         \
+    --disable-openmp
+%mingw_make %{?_smp_mflags}
 
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT install
+%mingw_make_install DESTDIR=$RPM_BUILD_ROOT
+
 rm -f $RPM_BUILD_ROOT%{mingw32_datadir}/locale/locale.alias
 rm -f $RPM_BUILD_ROOT%{mingw32_libdir}/charset.alias
 
+rm -f $RPM_BUILD_ROOT%{mingw64_datadir}/locale/locale.alias
+rm -f $RPM_BUILD_ROOT%{mingw64_libdir}/charset.alias
+
 # Remove documentation - already available in base gettext-devel.
-rm -rf $RPM_BUILD_ROOT%{mingw32_mandir}/man1/
-rm -rf $RPM_BUILD_ROOT%{mingw32_mandir}/man3/
-rm -rf $RPM_BUILD_ROOT%{mingw32_docdir}/gettext/
-rm -rf $RPM_BUILD_ROOT%{mingw32_docdir}/libasprintf/
-rm -rf $RPM_BUILD_ROOT%{mingw32_datadir}/info/
+rm -rf $RPM_BUILD_ROOT%{mingw32_mandir}
+rm -rf $RPM_BUILD_ROOT%{mingw32_docdir}
+rm -rf $RPM_BUILD_ROOT%{mingw32_infodir}
+
+rm -rf $RPM_BUILD_ROOT%{mingw64_mandir}
+rm -rf $RPM_BUILD_ROOT%{mingw64_docdir}
+rm -rf $RPM_BUILD_ROOT%{mingw64_infodir}
+
+# Drop some useless tools
+rm -rf $RPM_BUILD_ROOT%{mingw32_libdir}/gettext
+rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/gettext
 
 # Drop all .la files
 find $RPM_BUILD_ROOT -name "*.la" -delete
@@ -92,6 +132,7 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %find_lang %{name} --all-name
 
 
+# Win32
 %files -n mingw32-gettext -f %{name}.lang
 %doc COPYING
 %{mingw32_bindir}/autopoint
@@ -111,7 +152,6 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_includedir}/autosprintf.h
 %{mingw32_includedir}/gettext-po.h
 %{mingw32_includedir}/libintl.h
-%{mingw32_libdir}/gettext
 %{mingw32_libdir}/libasprintf.dll.a
 %{mingw32_libdir}/libgettextlib.dll.a
 %{mingw32_libdir}/libgettextpo.dll.a
@@ -125,8 +165,44 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_libdir}/libgettextpo.a
 %{mingw32_libdir}/libintl.a
 
+# Win64
+%files -n mingw64-gettext -f %{name}.lang
+%doc COPYING
+%{mingw64_bindir}/autopoint
+%{mingw64_bindir}/envsubst.exe
+%{mingw64_bindir}/gettext.exe
+%{mingw64_bindir}/gettext.sh
+%{mingw64_bindir}/gettextize
+%{mingw64_bindir}/libasprintf-0.dll
+%{mingw64_bindir}/libgettextlib-0-18-1.dll
+%{mingw64_bindir}/libgettextpo-0.dll
+%{mingw64_bindir}/libgettextsrc-0-18-1.dll
+%{mingw64_bindir}/libintl-8.dll
+%{mingw64_bindir}/msg*.exe
+%{mingw64_bindir}/ngettext.exe
+%{mingw64_bindir}/recode-sr-latin.exe
+%{mingw64_bindir}/xgettext.exe
+%{mingw64_includedir}/autosprintf.h
+%{mingw64_includedir}/gettext-po.h
+%{mingw64_includedir}/libintl.h
+%{mingw64_libdir}/libasprintf.dll.a
+%{mingw64_libdir}/libgettextlib.dll.a
+%{mingw64_libdir}/libgettextpo.dll.a
+%{mingw64_libdir}/libgettextsrc.dll.a
+%{mingw64_libdir}/libintl.dll.a
+%{mingw64_datadir}/gettext/
+%{mingw64_datadir}/aclocal/*m4
+
+%files -n mingw64-gettext-static
+%{mingw64_libdir}/libasprintf.a
+%{mingw64_libdir}/libgettextpo.a
+%{mingw64_libdir}/libintl.a
+
 
 %changelog
+* Sat Mar 10 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-8
+- Added win64 support
+
 * Thu Mar 08 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-7
 - Dropped .la files
 
