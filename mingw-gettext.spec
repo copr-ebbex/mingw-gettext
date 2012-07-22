@@ -5,7 +5,7 @@
 
 Name:      mingw-gettext
 Version:   0.18.1.1
-Release:   9%{?dist}
+Release:   10%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -129,11 +129,11 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/gettext
 # Drop all .la files
 find $RPM_BUILD_ROOT -name "*.la" -delete
 
-%find_lang %{name} --all-name
+%mingw_find_lang %{name} --all-name
 
 
 # Win32
-%files -n mingw32-gettext -f %{name}.lang
+%files -n mingw32-gettext -f mingw32-%{name}.lang
 %doc COPYING
 %{mingw32_bindir}/autopoint
 %{mingw32_bindir}/envsubst.exe
@@ -166,7 +166,7 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_libdir}/libintl.a
 
 # Win64
-%files -n mingw64-gettext -f %{name}.lang
+%files -n mingw64-gettext -f mingw64-%{name}.lang
 %doc COPYING
 %{mingw64_bindir}/autopoint
 %{mingw64_bindir}/envsubst.exe
@@ -200,6 +200,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Sun Jul 22 2012 Kalev Lember <kalevlember@gmail.com> - 0.18.1.1-10
+- Fix message catalog split to subpackages (#842166)
+
 * Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.18.1.1-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
