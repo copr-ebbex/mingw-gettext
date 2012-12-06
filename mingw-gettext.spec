@@ -1,11 +1,8 @@
 %?mingw_package_header
 
-%global mingw_build_win32 1
-%global mingw_build_win64 1
-
 Name:      mingw-gettext
 Version:   0.18.1.1
-Release:   10%{?dist}
+Release:   11%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -93,6 +90,12 @@ autoreconf -i --force
 # Some build workarounds
 export gl_cv_func_memchr_works="yes"
 export ac_cv_func_strnlen_working="yes"
+
+# The libtool on RHEL6 is too old for win64 support
+%if 0%{?rhel} == 6
+export lt_cv_deplibs_check_method="pass_all"
+%endif
+
 %mingw_configure            \
     --disable-java          \
     --disable-native-java   \
@@ -200,6 +203,10 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Thu Dec  6 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-11
+- Fix the build on RHEL6 (too old libtool)
+- Minor cleanup
+
 * Sun Jul 22 2012 Kalev Lember <kalevlember@gmail.com> - 0.18.1.1-10
 - Fix message catalog split to subpackages (#842166)
 
