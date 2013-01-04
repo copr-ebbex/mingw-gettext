@@ -1,17 +1,14 @@
 %?mingw_package_header
 
 Name:      mingw-gettext
-Version:   0.18.1.1
-Release:   11%{?dist}
+Version:   0.18.2
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
 Group:     Development/Libraries
 URL:       http://www.gnu.org/software/gettext/
 Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.gz
-
-# Fix compatibility with mingw-w64
-Patch0:    gettext-0.18.1.1-tml.patch
 
 BuildArch: noarch
 
@@ -28,9 +25,6 @@ BuildRequires: mingw64-gcc-c++
 BuildRequires: mingw64-binutils
 BuildRequires: mingw64-win-iconv
 BuildRequires: mingw64-termcap
-
-# The libtool bundled with this package is too old for win64 support
-BuildRequires: autoconf automake libtool
 
 # Possible extra BRs.  These are used if available, but
 # not required just for building.
@@ -80,22 +74,9 @@ Static version of the MinGW Windows Gettext library.
 
 %prep
 %setup -q -n gettext-%{version}
-%patch0 -p0
-
-# The libtool bundled with this package is too old for win64 support
-autoreconf -i --force
 
 
 %build
-# Some build workarounds
-export gl_cv_func_memchr_works="yes"
-export ac_cv_func_strnlen_working="yes"
-
-# The libtool on RHEL6 is too old for win64 support
-%if 0%{?rhel} == 6
-export lt_cv_deplibs_check_method="pass_all"
-%endif
-
 %mingw_configure            \
     --disable-java          \
     --disable-native-java   \
@@ -144,9 +125,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-18-1.dll
+%{mingw32_bindir}/libgettextlib-0-18-2.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-18-1.dll
+%{mingw32_bindir}/libgettextsrc-0-18-2.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/msg*.exe
 %{mingw32_bindir}/ngettext.exe
@@ -177,9 +158,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-18-1.dll
+%{mingw64_bindir}/libgettextlib-0-18-2.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-18-1.dll
+%{mingw64_bindir}/libgettextsrc-0-18-2.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/msg*.exe
 %{mingw64_bindir}/ngettext.exe
@@ -203,6 +184,10 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Fri Jan  4 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.2-1
+- Update to 0.18.2
+- Removed all hacks as they're not needed any more
+
 * Thu Dec  6 2012 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.1.1-11
 - Fix the build on RHEL6 (too old libtool)
 - Minor cleanup
