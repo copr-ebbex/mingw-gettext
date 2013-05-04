@@ -1,8 +1,8 @@
 %?mingw_package_header
 
 Name:      mingw-gettext
-Version:   0.18.2
-Release:   2%{?dist}
+Version:   0.18.2.1
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -184,6 +184,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Sat May  4 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.2.1-1
+- Update to 0.18.2.1
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.18.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
@@ -275,7 +278,7 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 * Thu Sep 11 2008 Daniel P. Berrange <berrange@redhat.com> - 0.17-4
 - Disable emacs lisp file install
 
-* Thu Sep 10 2008 Richard W.M. Jones <rjones@redhat.com> - 0.17-3
+* Thu Sep 11 2008 Richard W.M. Jones <rjones@redhat.com> - 0.17-3
 - Remove static libraries.
 
 * Thu Sep  4 2008 Richard W.M. Jones <rjones@redhat.com> - 0.17-2
