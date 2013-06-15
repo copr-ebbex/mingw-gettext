@@ -2,7 +2,7 @@
 
 Name:      mingw-gettext
 Version:   0.18.2.1
-Release:   2%{?dist}
+Release:   3%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
