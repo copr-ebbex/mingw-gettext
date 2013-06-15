@@ -2,7 +2,7 @@
 
 Name:      mingw-gettext
 Version:   0.18.2.1
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -184,6 +184,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Sat Jun 15 2013 Erik van Pienbroek <epienbro@fedoraproject.org - 0.18.2.1-2
+- Rebuild to resolve InterlockedCompareExchange regression in mingw32 libraries
+
 * Sat May  4 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.2.1-1
 - Update to 0.18.2.1
 
