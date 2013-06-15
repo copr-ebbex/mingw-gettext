@@ -33,6 +33,9 @@ BuildRequires: mingw64-termcap
 #BuildRequires: mingw32-expat
 #BuildRequires: mingw32-glib2
 
+# Fix FTBFS due to invalid use of cdecl (__cdecl should be used instead)
+Patch0:        gettext-use-proper-cdecl.patch
+
 
 %description
 MinGW Windows Gettext library
@@ -74,6 +77,7 @@ Static version of the MinGW Windows Gettext library.
 
 %prep
 %setup -q -n gettext-%{version}
+%patch0 -p0
 
 
 %build
@@ -184,7 +188,10 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
-* Sat Jun 15 2013 Erik van Pienbroek <epienbro@fedoraproject.org - 0.18.2.1-2
+* Sat Jun 15 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.2.1-3
+- Fix FTBFS due to invalid use of cdecl
+
+* Sat Jun 15 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.2.1-2
 - Rebuild to resolve InterlockedCompareExchange regression in mingw32 libraries
 
 * Sat May  4 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.2.1-1

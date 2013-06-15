@@ -1,0 +1,33 @@
+--- gettext-runtime/gnulib-lib/msvc-inval.c.orig	2013-06-15 18:01:47.658316614 +0200
++++ gettext-runtime/gnulib-lib/msvc-inval.c	2013-06-15 18:01:51.492348702 +0200
+@@ -28,7 +28,7 @@
+ 
+ # if MSVC_INVALID_PARAMETER_HANDLING == DEFAULT_HANDLING
+ 
+-static void cdecl
++static void __cdecl
+ gl_msvc_invalid_parameter_handler (const wchar_t *expression,
+                                    const wchar_t *function,
+                                    const wchar_t *file,
+--- gettext-tools/gnulib-lib/msvc-inval.c.orig	2013-06-15 18:02:11.335514821 +0200
++++ gettext-tools/gnulib-lib/msvc-inval.c	2013-06-15 18:02:20.387590641 +0200
+@@ -28,7 +28,7 @@
+ 
+ # if MSVC_INVALID_PARAMETER_HANDLING == DEFAULT_HANDLING
+ 
+-static void cdecl
++static void __cdecl
+ gl_msvc_invalid_parameter_handler (const wchar_t *expression,
+                                    const wchar_t *function,
+                                    const wchar_t *file,
+--- gettext-tools/libgettextpo/msvc-inval.c.orig	2013-06-15 18:02:25.814636031 +0200
++++ gettext-tools/libgettextpo/msvc-inval.c	2013-06-15 18:02:31.912687078 +0200
+@@ -28,7 +28,7 @@
+ 
+ # if MSVC_INVALID_PARAMETER_HANDLING == DEFAULT_HANDLING
+ 
+-static void cdecl
++static void __cdecl
+ gl_msvc_invalid_parameter_handler (const wchar_t *expression,
+                                    const wchar_t *function,
+                                    const wchar_t *file,
