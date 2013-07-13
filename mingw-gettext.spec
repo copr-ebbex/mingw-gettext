@@ -1,8 +1,8 @@
 %?mingw_package_header
 
 Name:      mingw-gettext
-Version:   0.18.2.1
-Release:   3%{?dist}
+Version:   0.18.3
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -32,9 +32,6 @@ BuildRequires: mingw64-termcap
 #BuildRequires: mingw32-libxml2
 #BuildRequires: mingw32-expat
 #BuildRequires: mingw32-glib2
-
-# Fix FTBFS due to invalid use of cdecl (__cdecl should be used instead)
-Patch0:        gettext-use-proper-cdecl.patch
 
 
 %description
@@ -77,7 +74,6 @@ Static version of the MinGW Windows Gettext library.
 
 %prep
 %setup -q -n gettext-%{version}
-%patch0 -p0
 
 
 %build
@@ -129,9 +125,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-18-2.dll
+%{mingw32_bindir}/libgettextlib-0-18-3.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-18-2.dll
+%{mingw32_bindir}/libgettextsrc-0-18-3.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/msg*.exe
 %{mingw32_bindir}/ngettext.exe
@@ -162,9 +158,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-18-2.dll
+%{mingw64_bindir}/libgettextlib-0-18-3.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-18-2.dll
+%{mingw64_bindir}/libgettextsrc-0-18-3.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/msg*.exe
 %{mingw64_bindir}/ngettext.exe
@@ -188,6 +184,10 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Sat Jul 13 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.3-1
+- Update to 0.18.3
+- Dropped upstreamed patch
+
 * Sat Jun 15 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.2.1-3
 - Fix FTBFS due to invalid use of cdecl
 
