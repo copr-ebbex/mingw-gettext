@@ -1,8 +1,8 @@
 %?mingw_package_header
 
 Name:      mingw-gettext
-Version:   0.18.3
-Release:   2%{?dist}
+Version:   0.18.3.1
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -184,6 +184,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Sat Sep  7 2013 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.18.3.1-1
+- Update to 0.18.3.1
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.18.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
