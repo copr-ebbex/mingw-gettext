@@ -2,7 +2,7 @@
 
 Name:      mingw-gettext
 Version:   0.18.3.2
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -184,6 +184,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.18.3.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Sat Mar 29 2014 Kalev Lember <kalevlember@gmail.com> - 0.18.3.2-1
 - Update to 0.18.3.2
 
