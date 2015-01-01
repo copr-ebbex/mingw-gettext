@@ -1,8 +1,8 @@
 %?mingw_package_header
 
 Name:      mingw-gettext
-Version:   0.18.3.2
-Release:   2%{?dist}
+Version:   0.19.4
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -125,9 +125,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-18-3.dll
+%{mingw32_bindir}/libgettextlib-0-19-4.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-18-3.dll
+%{mingw32_bindir}/libgettextsrc-0-19-4.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/msg*.exe
 %{mingw32_bindir}/ngettext.exe
@@ -158,9 +158,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-18-3.dll
+%{mingw64_bindir}/libgettextlib-0-19-4.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-18-3.dll
+%{mingw64_bindir}/libgettextsrc-0-19-4.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/msg*.exe
 %{mingw64_bindir}/ngettext.exe
@@ -184,6 +184,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Thu Jan  1 2015 Erik van Pienbroek <epienbro@fedoraproject.org> - 0.19.4-1
+- Update to 0.19.4
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.18.3.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
