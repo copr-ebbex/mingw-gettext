@@ -1,8 +1,8 @@
 %?mingw_package_header
 
 Name:      mingw-gettext
-Version:   0.19.4
-Release:   3%{?dist}
+Version:   0.19.7
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -125,9 +125,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-19-4.dll
+%{mingw32_bindir}/libgettextlib-0-19-7.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-19-4.dll
+%{mingw32_bindir}/libgettextsrc-0-19-7.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/msg*.exe
 %{mingw32_bindir}/ngettext.exe
@@ -142,6 +142,7 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_libdir}/libgettextsrc.dll.a
 %{mingw32_libdir}/libintl.dll.a
 %{mingw32_datadir}/gettext/
+%{mingw32_datadir}/gettext-%{version}/
 %{mingw32_datadir}/aclocal/*m4
 
 %files -n mingw32-gettext-static
@@ -158,9 +159,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-19-4.dll
+%{mingw64_bindir}/libgettextlib-0-19-7.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-19-4.dll
+%{mingw64_bindir}/libgettextsrc-0-19-7.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/msg*.exe
 %{mingw64_bindir}/ngettext.exe
@@ -175,6 +176,7 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_libdir}/libgettextsrc.dll.a
 %{mingw64_libdir}/libintl.dll.a
 %{mingw64_datadir}/gettext/
+%{mingw64_datadir}/gettext-%{version}/
 %{mingw64_datadir}/aclocal/*m4
 
 %files -n mingw64-gettext-static
@@ -184,6 +186,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Tue May 03 2016 Kalev Lember <klember@redhat.com> - 0.19.7-1
+- Update to 0.19.7
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.19.4-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
