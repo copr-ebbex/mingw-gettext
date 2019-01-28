@@ -6,7 +6,6 @@ Release:   5%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
-Group:     Development/Libraries
 URL:       http://www.gnu.org/software/gettext/
 Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.gz
 
@@ -48,7 +47,6 @@ MinGW Windows Gettext library
 %package -n mingw32-gettext-static
 Summary:        Static version of the MinGW Windows Gettext library
 Requires:       mingw32-gettext = %{version}-%{release}
-Group:          Development/Libraries
 
 %description -n mingw32-gettext-static
 Static version of the MinGW Windows Gettext library.
@@ -63,7 +61,6 @@ MinGW Windows Gettext library
 %package -n mingw64-gettext-static
 Summary:        Static version of the MinGW Windows Gettext library
 Requires:       mingw64-gettext = %{version}-%{release}
-Group:          Development/Libraries
 
 %description -n mingw64-gettext-static
 Static version of the MinGW Windows Gettext library.
