@@ -1,13 +1,13 @@
 %?mingw_package_header
 
 Name:      mingw-gettext
-Version:   0.19.7
-Release:   7%{?dist}
+Version:   0.20.1
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
 URL:       http://www.gnu.org/software/gettext/
-Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.gz
+Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
 
 BuildArch: noarch
 
@@ -72,14 +72,18 @@ Static version of the MinGW Windows Gettext library.
 %prep
 %setup -q -n gettext-%{version}
 
-
 %build
+
+# Please, re-enable this when rebasing to the latest
+# upstream release. For 0.20.1, it had to be disabled
+# due to build issues.
+#    --enable-threads=win32
+
 %mingw_configure            \
     --disable-java          \
     --disable-native-java   \
     --disable-csharp        \
     --enable-static         \
-    --enable-threads=win32  \
     --without-emacs         \
     --disable-openmp
 %mingw_make %{?_smp_mflags}
@@ -122,10 +126,11 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-19-7.dll
+%{mingw32_bindir}/libgettextlib-0-20-1.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-19-7.dll
+%{mingw32_bindir}/libgettextsrc-0-20-1.dll
 %{mingw32_bindir}/libintl-8.dll
+%{mingw32_bindir}/libtextstyle-0.dll
 %{mingw32_bindir}/msg*.exe
 %{mingw32_bindir}/ngettext.exe
 %{mingw32_bindir}/recode-sr-latin.exe
@@ -133,19 +138,25 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_includedir}/autosprintf.h
 %{mingw32_includedir}/gettext-po.h
 %{mingw32_includedir}/libintl.h
+%{mingw32_includedir}/textstyle.h
+%{mingw32_includedir}/textstyle/stdbool.h
+%{mingw32_includedir}/textstyle/version.h
+%{mingw32_includedir}/textstyle/woe32dll.h
 %{mingw32_libdir}/libasprintf.dll.a
 %{mingw32_libdir}/libgettextlib.dll.a
 %{mingw32_libdir}/libgettextpo.dll.a
 %{mingw32_libdir}/libgettextsrc.dll.a
 %{mingw32_libdir}/libintl.dll.a
+%{mingw32_libdir}/libtextstyle.dll.a
 %{mingw32_datadir}/gettext/
-%{mingw32_datadir}/gettext-%{version}/
+%{mingw32_datadir}/gettext-0.20/
 %{mingw32_datadir}/aclocal/*m4
 
 %files -n mingw32-gettext-static
 %{mingw32_libdir}/libasprintf.a
 %{mingw32_libdir}/libgettextpo.a
 %{mingw32_libdir}/libintl.a
+%{mingw32_libdir}/libtextstyle.a
 
 # Win64
 %files -n mingw64-gettext -f mingw64-%{name}.lang
@@ -156,10 +167,11 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-19-7.dll
+%{mingw64_bindir}/libgettextlib-0-20-1.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-19-7.dll
+%{mingw64_bindir}/libgettextsrc-0-20-1.dll
 %{mingw64_bindir}/libintl-8.dll
+%{mingw64_bindir}/libtextstyle-0.dll
 %{mingw64_bindir}/msg*.exe
 %{mingw64_bindir}/ngettext.exe
 %{mingw64_bindir}/recode-sr-latin.exe
@@ -167,22 +179,31 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_includedir}/autosprintf.h
 %{mingw64_includedir}/gettext-po.h
 %{mingw64_includedir}/libintl.h
+%{mingw64_includedir}/textstyle.h
+%{mingw64_includedir}/textstyle/stdbool.h
+%{mingw64_includedir}/textstyle/version.h
+%{mingw64_includedir}/textstyle/woe32dll.h
 %{mingw64_libdir}/libasprintf.dll.a
 %{mingw64_libdir}/libgettextlib.dll.a
 %{mingw64_libdir}/libgettextpo.dll.a
 %{mingw64_libdir}/libgettextsrc.dll.a
 %{mingw64_libdir}/libintl.dll.a
+%{mingw64_libdir}/libtextstyle.dll.a
 %{mingw64_datadir}/gettext/
-%{mingw64_datadir}/gettext-%{version}/
+%{mingw64_datadir}/gettext-0.20/
 %{mingw64_datadir}/aclocal/*m4
 
 %files -n mingw64-gettext-static
 %{mingw64_libdir}/libasprintf.a
 %{mingw64_libdir}/libgettextpo.a
 %{mingw64_libdir}/libintl.a
+%{mingw64_libdir}/libtextstyle.a
 
 
 %changelog
+* Tue Aug 13 2019 Fabiano Fidêncio <fidencio@redhat.com> - 0.20.1-1
+- Update the sources accordingly to its native counter part, rhbz#1740721
+
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 0.19.7-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
