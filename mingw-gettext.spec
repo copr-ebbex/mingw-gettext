@@ -2,7 +2,7 @@
 
 Name:      mingw-gettext
 Version:   0.20.1
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -201,6 +201,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Tue Oct 08 2019 Sandro Mani <manisandro@gmail.com> - 0.20.1-2
+- Rebuild (Changes/Mingw32GccDwarf2)
+
 * Tue Aug 13 2019 Fabiano Fidêncio <fidencio@redhat.com> - 0.20.1-1
 - Update the sources accordingly to its native counter part, rhbz#1740721
 
