@@ -2,7 +2,7 @@
 
 Name:      mingw-gettext
 Version:   0.20.1
-Release:   2%{?dist}
+Release:   3%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -201,6 +201,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 0.20.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Tue Oct 08 2019 Sandro Mani <manisandro@gmail.com> - 0.20.1-2
 - Rebuild (Changes/Mingw32GccDwarf2)
 
