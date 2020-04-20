@@ -1,8 +1,8 @@
-%?mingw_package_header
+%{?mingw_package_header}
 
 Name:      mingw-gettext
-Version:   0.20.1
-Release:   3%{?dist}
+Version:   0.20.2
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -73,46 +73,41 @@ Static version of the MinGW Windows Gettext library.
 %setup -q -n gettext-%{version}
 
 %build
-
-# Please, re-enable this when rebasing to the latest
-# upstream release. For 0.20.1, it had to be disabled
-# due to build issues.
-#    --enable-threads=win32
-
 %mingw_configure            \
     --disable-java          \
     --disable-native-java   \
     --disable-csharp        \
     --enable-static         \
+    --enable-threads=win32  \
     --without-emacs         \
     --disable-openmp
 %mingw_make %{?_smp_mflags}
 
 
 %install
-%mingw_make_install DESTDIR=$RPM_BUILD_ROOT
+%mingw_make_install DESTDIR=%{buildroot}
 
-rm -f $RPM_BUILD_ROOT%{mingw32_datadir}/locale/locale.alias
-rm -f $RPM_BUILD_ROOT%{mingw32_libdir}/charset.alias
+rm -f %{buildroot}%{mingw32_datadir}/locale/locale.alias
+rm -f %{buildroot}%{mingw32_libdir}/charset.alias
 
-rm -f $RPM_BUILD_ROOT%{mingw64_datadir}/locale/locale.alias
-rm -f $RPM_BUILD_ROOT%{mingw64_libdir}/charset.alias
+rm -f %{buildroot}%{mingw64_datadir}/locale/locale.alias
+rm -f %{buildroot}%{mingw64_libdir}/charset.alias
 
 # Remove documentation - already available in base gettext-devel.
-rm -rf $RPM_BUILD_ROOT%{mingw32_mandir}
-rm -rf $RPM_BUILD_ROOT%{mingw32_docdir}
-rm -rf $RPM_BUILD_ROOT%{mingw32_infodir}
+rm -rf %{buildroot}%{mingw32_mandir}
+rm -rf %{buildroot}%{mingw32_docdir}
+rm -rf %{buildroot}%{mingw32_infodir}
 
-rm -rf $RPM_BUILD_ROOT%{mingw64_mandir}
-rm -rf $RPM_BUILD_ROOT%{mingw64_docdir}
-rm -rf $RPM_BUILD_ROOT%{mingw64_infodir}
+rm -rf %{buildroot}%{mingw64_mandir}
+rm -rf %{buildroot}%{mingw64_docdir}
+rm -rf %{buildroot}%{mingw64_infodir}
 
 # Drop some useless tools
-rm -rf $RPM_BUILD_ROOT%{mingw32_libdir}/gettext
-rm -rf $RPM_BUILD_ROOT%{mingw64_libdir}/gettext
+rm -rf %{buildroot}%{mingw32_libdir}/gettext
+rm -rf %{buildroot}%{mingw64_libdir}/gettext
 
 # Drop all .la files
-find $RPM_BUILD_ROOT -name "*.la" -delete
+find %{buildroot} -name "*.la" -delete
 
 %mingw_find_lang %{name} --all-name
 
@@ -126,9 +121,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-20-1.dll
+%{mingw32_bindir}/libgettextlib-0-20-2.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-20-1.dll
+%{mingw32_bindir}/libgettextsrc-0-20-2.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/libtextstyle-0.dll
 %{mingw32_bindir}/msg*.exe
@@ -149,7 +144,7 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw32_libdir}/libintl.dll.a
 %{mingw32_libdir}/libtextstyle.dll.a
 %{mingw32_datadir}/gettext/
-%{mingw32_datadir}/gettext-0.20/
+%{mingw32_datadir}/gettext-%{version}/
 %{mingw32_datadir}/aclocal/*m4
 
 %files -n mingw32-gettext-static
@@ -167,9 +162,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-20-1.dll
+%{mingw64_bindir}/libgettextlib-0-20-2.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-20-1.dll
+%{mingw64_bindir}/libgettextsrc-0-20-2.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/libtextstyle-0.dll
 %{mingw64_bindir}/msg*.exe
@@ -190,7 +185,7 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 %{mingw64_libdir}/libintl.dll.a
 %{mingw64_libdir}/libtextstyle.dll.a
 %{mingw64_datadir}/gettext/
-%{mingw64_datadir}/gettext-0.20/
+%{mingw64_datadir}/gettext-%{version}/
 %{mingw64_datadir}/aclocal/*m4
 
 %files -n mingw64-gettext-static
@@ -201,6 +196,9 @@ find $RPM_BUILD_ROOT -name "*.la" -delete
 
 
 %changelog
+* Thu Apr 16 2020 Sandro Mani <manisandro@gmail.com> - 0.20.2-1
+- Update to 0.20.2
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 0.20.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
