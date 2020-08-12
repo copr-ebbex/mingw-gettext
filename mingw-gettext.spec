@@ -1,15 +1,17 @@
 %{?mingw_package_header}
 
 Name:      mingw-gettext
-Version:   0.20.2
-Release:   3%{?dist}
+Version:   0.21
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
 URL:       http://www.gnu.org/software/gettext/
-Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
+Source0:   https://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
 # Don't override various *printf macros in C++, they collide with the std::xxx counterparts
 Patch0:   gettext-printf_collision.patch
+# Add missing symbol export
+Patch1:    gettext_formatstring-ruby.patch
 
 BuildArch: noarch
 
@@ -123,9 +125,9 @@ find %{buildroot} -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-20-2.dll
+%{mingw32_bindir}/libgettextlib-0-21.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-20-2.dll
+%{mingw32_bindir}/libgettextsrc-0-21.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/libtextstyle-0.dll
 %{mingw32_bindir}/msg*.exe
@@ -164,9 +166,9 @@ find %{buildroot} -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-20-2.dll
+%{mingw64_bindir}/libgettextlib-0-21.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-20-2.dll
+%{mingw64_bindir}/libgettextsrc-0-21.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/libtextstyle-0.dll
 %{mingw64_bindir}/msg*.exe
@@ -198,6 +200,9 @@ find %{buildroot} -name "*.la" -delete
 
 
 %changelog
+* Mon Aug 03 2020 Sandro Mani <manisandro@gmail.com> - 0.21.0-1
+- Update to 0.21.0
+
 * Tue Jul 28 2020 Sandro Mani <manisandro@gmail.com> - 0.20.2-3
 - Add gettext-printf_collision.patch
 
