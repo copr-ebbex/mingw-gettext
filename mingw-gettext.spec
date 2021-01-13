@@ -15,6 +15,7 @@ Patch1:    gettext_formatstring-ruby.patch
 
 BuildArch: noarch
 
+BuildRequires: make
 BuildRequires: mingw32-filesystem >= 95
 BuildRequires: mingw32-gcc
 BuildRequires: mingw32-gcc-c++
