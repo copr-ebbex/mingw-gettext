@@ -2,7 +2,7 @@
 
 Name:      mingw-gettext
 Version:   0.21
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -201,6 +201,9 @@ find %{buildroot} -name "*.la" -delete
 
 
 %changelog
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.21-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Mon Aug 03 2020 Sandro Mani <manisandro@gmail.com> - 0.21.0-1
 - Update to 0.21.0
 
