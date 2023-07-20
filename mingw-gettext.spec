@@ -140,7 +140,6 @@ find %{buildroot} -name "*.la" -delete
 %{mingw32_includedir}/textstyle/woe32dll.h
 %{mingw32_libdir}/libasprintf.dll.a
 %{mingw32_libdir}/libgettextlib.dll.a
-%{mingw32_libdir}/libgettextlib.a
 %{mingw32_libdir}/libgettextpo.dll.a
 %{mingw32_libdir}/libgettextsrc.dll.a
 %{mingw32_libdir}/libintl.dll.a
@@ -182,7 +181,6 @@ find %{buildroot} -name "*.la" -delete
 %{mingw64_includedir}/textstyle/woe32dll.h
 %{mingw64_libdir}/libasprintf.dll.a
 %{mingw64_libdir}/libgettextlib.dll.a
-%{mingw64_libdir}/libgettextlib.a
 %{mingw64_libdir}/libgettextpo.dll.a
 %{mingw64_libdir}/libgettextsrc.dll.a
 %{mingw64_libdir}/libintl.dll.a
