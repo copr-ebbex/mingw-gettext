@@ -122,9 +122,9 @@ find %{buildroot} -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-21-1.dll
+%{mingw32_bindir}/libgettextlib-0-22.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-21-1.dll
+%{mingw32_bindir}/libgettextsrc-0-22.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/libtextstyle-0.dll
 %{mingw32_bindir}/msg*.exe
@@ -140,6 +140,7 @@ find %{buildroot} -name "*.la" -delete
 %{mingw32_includedir}/textstyle/woe32dll.h
 %{mingw32_libdir}/libasprintf.dll.a
 %{mingw32_libdir}/libgettextlib.dll.a
+%{mingw32_libdir}/libgettextlib.a
 %{mingw32_libdir}/libgettextpo.dll.a
 %{mingw32_libdir}/libgettextsrc.dll.a
 %{mingw32_libdir}/libintl.dll.a
@@ -163,9 +164,9 @@ find %{buildroot} -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-21-1.dll
+%{mingw64_bindir}/libgettextlib-0-22.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-21-1.dll
+%{mingw64_bindir}/libgettextsrc-0-22.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/libtextstyle-0.dll
 %{mingw64_bindir}/msg*.exe
@@ -181,6 +182,7 @@ find %{buildroot} -name "*.la" -delete
 %{mingw64_includedir}/textstyle/woe32dll.h
 %{mingw64_libdir}/libasprintf.dll.a
 %{mingw64_libdir}/libgettextlib.dll.a
+%{mingw64_libdir}/libgettextlib.a
 %{mingw64_libdir}/libgettextpo.dll.a
 %{mingw64_libdir}/libgettextsrc.dll.a
 %{mingw64_libdir}/libintl.dll.a
