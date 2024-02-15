@@ -107,8 +107,12 @@ rm -rf %{buildroot}%{mingw64_infodir}
 rm -rf %{buildroot}%{mingw32_libdir}/gettext
 rm -rf %{buildroot}%{mingw64_libdir}/gettext
 
-# Drop all .la files
+# Drop all .la files and .a files
 find %{buildroot} -name "*.la" -delete
+rm %{buildroot}%{mingw32_libdir}/libgettextlib.a
+rm %{buildroot}%{mingw32_libdir}/libgettextsrc.a
+rm %{buildroot}%{mingw64_libdir}/libgettextlib.a
+rm %{buildroot}%{mingw64_libdir}/libgettextsrc.a
 
 %mingw_find_lang %{name} --all-name
 
@@ -122,9 +126,9 @@ find %{buildroot} -name "*.la" -delete
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-22.dll
+%{mingw32_bindir}/libgettextlib-0-22-4.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-22.dll
+%{mingw32_bindir}/libgettextsrc-0-22-4.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/libtextstyle-0.dll
 %{mingw32_bindir}/msg*.exe
@@ -163,9 +167,9 @@ find %{buildroot} -name "*.la" -delete
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-22.dll
+%{mingw64_bindir}/libgettextlib-0-22-4.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-22.dll
+%{mingw64_bindir}/libgettextsrc-0-22-4.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/libtextstyle-0.dll
 %{mingw64_bindir}/msg*.exe
