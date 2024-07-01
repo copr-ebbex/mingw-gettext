@@ -2,7 +2,7 @@
 
 Name:      mingw-gettext
 Version:   0.22.5
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPL-2.0-or-later AND LGPL-2.0-or-later
@@ -116,6 +116,10 @@ rm %{buildroot}%{mingw32_libdir}/libgettextsrc.a
 rm %{buildroot}%{mingw64_libdir}/libgettextlib.a
 rm %{buildroot}%{mingw64_libdir}/libgettextsrc.a
 
+# Drop javaversion.class since it's a binary blob (RHBZ#2294881)
+rm %{buildroot}%{mingw32_datadir}/gettext/javaversion.class
+rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
+
 %mingw_find_lang %{name} --all-name
 
 
@@ -203,6 +207,9 @@ rm %{buildroot}%{mingw64_libdir}/libgettextsrc.a
 
 
 %changelog
+* Mon Jul 01 2024 Richard W.M. Jones <rjones@redhat.com> - 0.22.5-2
+- Drop javaversion.class files (RHBZ#2294881)
+
 * Mon Mar 04 2024 Sandro Mani <manisandro@gmail.com> - 0.22.5-1
 - Update to 0.22.5
 
