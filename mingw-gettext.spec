@@ -130,9 +130,9 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw32_bindir}/gettext.sh
 %{mingw32_bindir}/gettextize
 %{mingw32_bindir}/libasprintf-0.dll
-%{mingw32_bindir}/libgettextlib-0-22-5.dll
+%{mingw32_bindir}/libgettextlib-0-23-1.dll
 %{mingw32_bindir}/libgettextpo-0.dll
-%{mingw32_bindir}/libgettextsrc-0-22-5.dll
+%{mingw32_bindir}/libgettextsrc-0-23-1.dll
 %{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/libtextstyle-0.dll
 %{mingw32_bindir}/msg*.exe
@@ -152,6 +152,12 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw32_libdir}/libgettextsrc.dll.a
 %{mingw32_libdir}/libintl.dll.a
 %{mingw32_libdir}/libtextstyle.dll.a
+%dir %{mingw32_libexecdir}/gettext/
+%{mingw32_libexecdir}/gettext/cldr-plurals.exe
+%{mingw32_libexecdir}/gettext/hostname.exe
+%{mingw32_libexecdir}/gettext/project-id
+%{mingw32_libexecdir}/gettext/urlget.exe
+%{mingw32_libexecdir}/gettext/user-email
 %{mingw32_datadir}/gettext/
 %{mingw32_datadir}/gettext-%{version}/
 %{mingw32_datadir}/aclocal/*m4
@@ -171,9 +177,9 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw64_bindir}/gettext.sh
 %{mingw64_bindir}/gettextize
 %{mingw64_bindir}/libasprintf-0.dll
-%{mingw64_bindir}/libgettextlib-0-22-5.dll
+%{mingw64_bindir}/libgettextlib-0-23-1.dll
 %{mingw64_bindir}/libgettextpo-0.dll
-%{mingw64_bindir}/libgettextsrc-0-22-5.dll
+%{mingw64_bindir}/libgettextsrc-0-23-1.dll
 %{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/libtextstyle-0.dll
 %{mingw64_bindir}/msg*.exe
@@ -193,6 +199,12 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw64_libdir}/libgettextsrc.dll.a
 %{mingw64_libdir}/libintl.dll.a
 %{mingw64_libdir}/libtextstyle.dll.a
+%dir %{mingw64_libexecdir}/gettext/
+%{mingw64_libexecdir}/gettext/cldr-plurals.exe
+%{mingw64_libexecdir}/gettext/hostname.exe
+%{mingw64_libexecdir}/gettext/project-id
+%{mingw64_libexecdir}/gettext/urlget.exe
+%{mingw64_libexecdir}/gettext/user-email
 %{mingw64_datadir}/gettext/
 %{mingw64_datadir}/gettext-%{version}/
 %{mingw64_datadir}/aclocal/*m4
