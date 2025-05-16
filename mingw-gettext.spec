@@ -160,7 +160,6 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw32_libexecdir}/gettext/user-email
 %{mingw32_datadir}/gettext/
 %{mingw32_datadir}/gettext-%{version}/
-%{mingw32_datadir}/aclocal/*m4
 
 %files -n mingw32-gettext-static
 %{mingw32_libdir}/libasprintf.a
@@ -207,7 +206,6 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw64_libexecdir}/gettext/user-email
 %{mingw64_datadir}/gettext/
 %{mingw64_datadir}/gettext-%{version}/
-%{mingw64_datadir}/aclocal/*m4
 
 %files -n mingw64-gettext-static
 %{mingw64_libdir}/libasprintf.a
