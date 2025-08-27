@@ -1,7 +1,7 @@
 %{?mingw_package_header}
 
 Name:      mingw-gettext
-Version:   0.25.1
+Version:   0.26
 Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
@@ -217,6 +217,9 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 
 
 %changelog
+* Wed Aug 27 2025 Sandro Mani <manisandro@gmail.com> - 0.26-1
+- Update to 0.26
+
 * Sun Jul 27 2025 Sandro Mani <manisandro@gmail.com> - 0.25.1-1
 - Update to 0.25.1
 
