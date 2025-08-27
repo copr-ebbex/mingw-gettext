@@ -137,6 +137,8 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw32_bindir}/libtextstyle-0.dll
 %{mingw32_bindir}/msg*.exe
 %{mingw32_bindir}/ngettext.exe
+%{mingw32_bindir}/printf_gettext.exe
+%{mingw32_bindir}/printf_ngettext.exe
 %{mingw32_bindir}/recode-sr-latin.exe
 %{mingw32_bindir}/xgettext.exe
 %{mingw32_includedir}/autosprintf.h
@@ -184,6 +186,8 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw64_bindir}/libtextstyle-0.dll
 %{mingw64_bindir}/msg*.exe
 %{mingw64_bindir}/ngettext.exe
+%{mingw64_bindir}/printf_gettext.exe
+%{mingw64_bindir}/printf_ngettext.exe
 %{mingw64_bindir}/recode-sr-latin.exe
 %{mingw64_bindir}/xgettext.exe
 %{mingw64_includedir}/autosprintf.h
