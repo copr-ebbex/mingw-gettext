@@ -2,7 +2,7 @@
 
 Name:      mingw-gettext
 Version:   0.26
-Release:   2%{?dist}
+Release:   2.1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPL-2.0-or-later AND LGPL-2.0-or-later
@@ -73,8 +73,34 @@ Static version of the MinGW Windows Gettext library.
 %prep
 %autosetup -p1 -n gettext-%{version}
 
+# Backport of the libtool 2.5.x fix (shipped in gettext 1.0): the C++ runtime
+# discovery only recognises -L/-R/-l in the compiler's verbose output, and
+# clang names compiler-rt by absolute path, so the builtins were dropped from
+# postdeps_CXX and every C++ DLL link failed with undefined __chkstk.  GCC
+# never emits a path matching the glob, so mingw32/mingw64 are unaffected.
+sed -i 's,^    -L\* | -R\* | -l\*)$,    -L* | -R* | -l* | */libclang_rt.*.a),' \
+    gettext-runtime/configure \
+    gettext-runtime/libasprintf/configure \
+    gettext-tools/configure
+# ... and it must actually have matched: a silent no-op here would put the
+# C++ links straight back to failing.
+for c in gettext-runtime/configure gettext-runtime/libasprintf/configure \
+         gettext-tools/configure ; do
+    grep -q '^    -L\* | -R\* | -l\* | \*/libclang_rt\.\*\.a)$' $c
+    ! grep -q '^    -L\* | -R\* | -l\*)$' $c
+done
+
 %build
+# Fedora 44's mingw32-gcc 16.1.1-1.fc44 ICEs in the GIMPLE strlen pass on
+# gettext-tools/gnulib-lib/localename-unsafe.c (both GCC targets; rawhide's
+# 16.1.1-3.fc45 is fixed).  Reproduced against unmodified dist-git HEAD.
+# Turn the crashing pass off; drop when f44 gets a fixed mingw-gcc.
+MINGW32_CFLAGS="%{mingw32_cflags} -fno-optimize-strlen"
+MINGW64_CFLAGS="%{mingw64_cflags} -fno-optimize-strlen"
+# gettext 0.26's gnulib includes C23 <stdcountof.h> from C++, where _Countof
+# does not exist; mask the header for every target (shared argument list).
 %mingw_configure            \
+    ac_cv_header_stdcountof_h=no \
     --disable-java          \
     --disable-native-java   \
     --disable-csharp        \
@@ -221,6 +247,15 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 
 
 %changelog
+* Thu Aug 06 2026 Erik Berg <fedora@slipsprogrammor.no> - 0.26-2.1
+- Fix the Fedora 44 FTBFS: pass -fno-optimize-strlen to the GCC targets
+  (mingw32-gcc 16.1.1-1.fc44 ICEs in the GIMPLE strlen pass on
+  localename-unsafe.c) and mask C23 stdcountof.h for every target
+  (ac_cv_header_stdcountof_h=no; gnulib includes it from C++, where
+  _Countof does not exist)
+- Backport the libtool 2.5.x fix that recognises */libclang_rt.*.a in the
+  C++ runtime discovery
+
 * Fri Jan 16 2026 Fedora Release Engineering <releng@fedoraproject.org> - 0.26-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
 
