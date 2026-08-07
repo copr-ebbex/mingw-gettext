@@ -1,8 +1,10 @@
+# Windows on ARM64, clang/lld based.  Must precede %%mingw_package_header.
+%global mingw_build_ucrtarm64 1
 %{?mingw_package_header}
 
 Name:      mingw-gettext
 Version:   0.26
-Release:   2.1%{?dist}
+Release:   2.2%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPL-2.0-or-later AND LGPL-2.0-or-later
@@ -25,6 +27,31 @@ BuildRequires: mingw64-gcc-c++
 BuildRequires: mingw64-binutils
 BuildRequires: mingw64-win-iconv
 BuildRequires: mingw64-termcap
+
+# No gcc for this target: the toolchain is clang, lld and the llvm-* tools.
+# Headers and CRT must be named; the other targets get them through gcc.
+BuildRequires: ucrtarm64-filesystem >= 152
+BuildRequires: ucrtarm64-clang
+BuildRequires: ucrtarm64-llvm-tools
+BuildRequires: ucrtarm64-headers
+BuildRequires: ucrtarm64-crt
+# The drivers always link -rtlib=compiler-rt (__chkstk lives there) and
+# -unwindlib=libunwind; libunwind only arrives through ucrtarm64-clang's
+# Recommends chain, and mock installs no weak dependencies.
+BuildRequires: ucrtarm64-compiler-rt >= 22.1.8
+BuildRequires: ucrtarm64-libunwind >= 22.1.8
+# gettext compiles real C++ on Windows targets (woe32dll/c++*.cc,
+# autosprintf.cc); clang++ always passes -stdlib=libc++, which is only a
+# Recommends of ucrtarm64-clang.
+BuildRequires: ucrtarm64-libcxx >= 22.1.8
+# gnulib's threadlib puts -pthread on the libgettextlib link line even with
+# --enable-threads=win32.
+BuildRequires: ucrtarm64-winpthreads
+# win-iconv ships no pkg-config file; gnulib's AM_ICONV finds it by link
+# probe out of the sysroot, as for mingw32/mingw64.
+BuildRequires: ucrtarm64-win-iconv
+# No ucrtarm64-termcap: there is no termcap/ncurses port for this target.
+# libtextstyle's terminfo probe is allowed to fail; no installed file changes.
 
 # Possible extra BRs.  These are used if available, but
 # not required just for building.
@@ -66,6 +93,21 @@ Requires:       mingw64-gettext = %{version}-%{release}
 %description -n mingw64-gettext-static
 Static version of the MinGW Windows Gettext library.
 
+# Windows on ARM64
+%package -n ucrtarm64-gettext
+Summary:         GNU libraries and utilities for producing multi-lingual messages
+
+%description -n ucrtarm64-gettext
+MinGW Windows Gettext library for the Windows on ARM64 target.
+
+%package -n ucrtarm64-gettext-static
+Summary:        Static version of the MinGW Windows Gettext library
+Requires:       ucrtarm64-gettext = %{version}-%{release}
+
+%description -n ucrtarm64-gettext-static
+Static version of the MinGW Windows Gettext library for the Windows on ARM64
+target.
+
 
 %{?mingw_debug_package}
 
@@ -97,6 +139,15 @@ done
 # Turn the crashing pass off; drop when f44 gets a fixed mingw-gcc.
 MINGW32_CFLAGS="%{mingw32_cflags} -fno-optimize-strlen"
 MINGW64_CFLAGS="%{mingw64_cflags} -fno-optimize-strlen"
+# pass_all for ucrtarm64 only: libtool's func_win32_libid file-magic test
+# predates AArch64 PE, rejects every import library, and with -no-undefined
+# silently degrades all the DLLs to static-only.  A plain argument reaches
+# the sub-configures through ac_configure_args; %%check asserts the result.
+# ac_cv_search_nanosleep: the clang drivers do not auto-link libwinpthread
+# the way the posix-threaded gcc does, and gnulib's plain nanosleep
+# replacement collides with mingw-w64 13.0.0's inline one; libwinpthread
+# really exports the symbol.  Not needed on 14.0.0.
+UCRTARM64_CONFIGURE_ARGS="lt_cv_deplibs_check_method=pass_all ac_cv_search_nanosleep=-lwinpthread"
 # gettext 0.26's gnulib includes C23 <stdcountof.h> from C++, where _Countof
 # does not exist; mask the header for every target (shared argument list).
 %mingw_configure            \
@@ -120,6 +171,9 @@ rm -f %{buildroot}%{mingw32_libdir}/charset.alias
 rm -f %{buildroot}%{mingw64_datadir}/locale/locale.alias
 rm -f %{buildroot}%{mingw64_libdir}/charset.alias
 
+rm -f %{buildroot}%{ucrtarm64_datadir}/locale/locale.alias
+rm -f %{buildroot}%{ucrtarm64_libdir}/charset.alias
+
 # Remove documentation - already available in base gettext-devel.
 rm -rf %{buildroot}%{mingw32_mandir}
 rm -rf %{buildroot}%{mingw32_docdir}
@@ -129,9 +183,14 @@ rm -rf %{buildroot}%{mingw64_mandir}
 rm -rf %{buildroot}%{mingw64_docdir}
 rm -rf %{buildroot}%{mingw64_infodir}
 
+rm -rf %{buildroot}%{ucrtarm64_mandir}
+rm -rf %{buildroot}%{ucrtarm64_docdir}
+rm -rf %{buildroot}%{ucrtarm64_infodir}
+
 # Drop some useless tools
 rm -rf %{buildroot}%{mingw32_libdir}/gettext
 rm -rf %{buildroot}%{mingw64_libdir}/gettext
+rm -rf %{buildroot}%{ucrtarm64_libdir}/gettext
 
 # Drop all .la files and .a files
 find %{buildroot} -name "*.la" -delete
@@ -139,12 +198,138 @@ rm %{buildroot}%{mingw32_libdir}/libgettextlib.a
 rm %{buildroot}%{mingw32_libdir}/libgettextsrc.a
 rm %{buildroot}%{mingw64_libdir}/libgettextlib.a
 rm %{buildroot}%{mingw64_libdir}/libgettextsrc.a
+rm %{buildroot}%{ucrtarm64_libdir}/libgettextlib.a
+rm %{buildroot}%{ucrtarm64_libdir}/libgettextsrc.a
 
 # Drop javaversion.class since it's a binary blob (RHBZ#2294881)
 rm %{buildroot}%{mingw32_datadir}/gettext/javaversion.class
 rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
+rm %{buildroot}%{ucrtarm64_datadir}/gettext/javaversion.class
 
 %mingw_find_lang %{name} --all-name
+
+
+%check
+# Verify the ucrtarm64 output with the llvm-* tools only: GNU nm/ar/objdump
+# silently mis-read AArch64 PE/COFF.  %%check runs after the BRP passes.
+
+# 1. libtool exports through a generated .def on every Windows host, so
+#    lld's missing --version-script never comes up; assert that positively
+#    and negatively on every generated libtool.  with_gnu_ld is yes here
+#    (ld.lld announces GNU compatibility), so the guard is not vacuous.
+#    The pass_all override from %%build is a configure cache variable, and a
+#    sub-configure that did not inherit it would fail silently; assert it in
+#    each script too.
+lts=$(find build_ucrtarm64 -name libtool -type f | sort)
+echo "ucrtarm64 libtool scripts:"; echo "$lts"
+test -n "$lts"
+for lt in $lts ; do
+    # Variables are quoted and repeated per language tag: strip the quotes,
+    # require that some copy says yes and none says no.
+    gnuld=$(sed -n 's/^with_gnu_ld=//p' "$lt" | tr -d '"')
+    echo "$lt: with_gnu_ld=[$gnuld]"
+    echo "$gnuld" | grep -qx yes
+    ! echo "$gnuld" | grep -qx no
+    grep -q 'soname\.def' "$lt"
+    ! grep -q 'version-script' "$lt"
+    dcm=$(sed -n 's/^deplibs_check_method=//p' "$lt" | tr -d '"')
+    echo "$lt: deplibs_check_method=[$dcm]"
+    echo "$dcm" | grep -qx pass_all
+    ! echo "$dcm" | grep -q file_magic
+done
+# ... and a GNU-ld target's libtool matches the same positive pattern, which is
+# what proves the greps above cannot pass on a renamed or missing variable.
+gnult=$(find build_win64 -name libtool -type f | sort | head -n 1)
+echo "GNU-ld reference libtool: $gnult"
+test -n "$gnult"
+grep -q 'soname\.def' "$gnult"
+# The mingw64 target keeps stock libtool's file-magic check -- proof both that
+# the pass_all greps above are not matching some string every libtool contains,
+# and that the override stayed confined to this one target.
+grep -q '^deplibs_check_method=.*file_magic' "$gnult"
+
+# 2. Every PE this target ships is a Windows ARM64 one, and the DLL set is the
+#    same set the mingw32/mingw64 subpackages ship.  A missing DLL here would
+#    otherwise only surface as an unresolvable dependency in glib2's build.
+for d in libasprintf-0.dll libgettextlib-0-26.dll libgettextpo-0.dll \
+         libgettextsrc-0-26.dll libintl-8.dll libtextstyle-0.dll ; do
+    test -f %{buildroot}%{ucrtarm64_bindir}/$d
+done
+for f in %{buildroot}%{ucrtarm64_bindir}/*.dll \
+         %{buildroot}%{ucrtarm64_bindir}/*.exe \
+         %{buildroot}%{ucrtarm64_libexecdir}/gettext/*.exe ; do
+    %{ucrtarm64_objdump} -f "$f" | grep -q 'file format coff-arm64'
+    # ... and the debug info really was split out; without
+    # %%mingw_debug_package every DLL ships unstripped, silently.
+    %{ucrtarm64_objdump} -h "$f" | grep -q 'gnu_debuglink'
+    test -f %{buildroot}%{_prefix}/lib/debug"${f#%{buildroot}}".debug
+done
+
+# 3. Every shipped archive -- static and import alike -- still carries its ar
+#    symbol index, and its members are ARM64 COFF.
+for a in %{buildroot}%{ucrtarm64_libdir}/*.a ; do
+    magic=$(od -A n -t x1 -N 10 "$a" | tr -d ' \n')
+    n=$(%{ucrtarm64_nm} --print-armap "$a" | grep -c ' in ' || :)
+    echo "archive $a: header $magic, $n indexed symbols"
+    test "$magic" = "213c617263683e0a2f20"
+    test "$n" -gt 0
+    %{ucrtarm64_objdump} -f "$a" | grep -q 'file format coff-arm64'
+    ! %{ucrtarm64_objdump} -f "$a" \
+        | grep -E 'file format (coff-i386|coff-x86-64|elf)'
+done
+# ... and libintl in particular resolves the entry point everything downstream
+# calls.  gettext renames the public API to libintl_* on Windows (libintl.h
+# redirects gettext -> libintl_gettext), so that is the name that has to be in
+# the index of both the static library and the import library.
+for a in %{buildroot}%{ucrtarm64_libdir}/libintl.a \
+         %{buildroot}%{ucrtarm64_libdir}/libintl.dll.a ; do
+    %{ucrtarm64_nm} --print-armap "$a" \
+        | awk '$1 == "libintl_gettext" && $2 == "in" { found = 1 } END { exit !found }'
+done
+
+# 4. Link test: a real libintl consumer -- which is what glib2 is -- has to
+#    compile and link against exactly what is about to be packaged, both against
+#    the import library and statically.  The executables cannot be run here, so
+#    only the link, the resulting file format and the imports are checked.
+armcheck=%{_builddir}/ucrtarm64-gettext-check
+rm -rf $armcheck
+mkdir -p $armcheck
+cat > $armcheck/t.c <<'EOF'
+#include <libintl.h>
+#include <stdio.h>
+#include <string.h>
+
+int main (void)
+{
+  const char *s;
+
+  if (bindtextdomain ("hello", ".") == NULL)
+    return 1;
+  if (textdomain ("hello") == NULL)
+    return 1;
+  s = gettext ("Hello, world!");
+  printf ("%%s\n", s);
+  return strcmp (s, "Hello, world!") == 0 ? 0 : 1;
+}
+EOF
+
+# Shared: -lintl resolves to libintl.dll.a -> libintl-8.dll.
+%{ucrtarm64_cc} -I%{buildroot}%{ucrtarm64_includedir} $armcheck/t.c \
+    -L%{buildroot}%{ucrtarm64_libdir} -lintl -o $armcheck/t.exe
+%{ucrtarm64_objdump} -f $armcheck/t.exe
+%{ucrtarm64_objdump} -f $armcheck/t.exe | grep -q 'file format coff-arm64'
+%{ucrtarm64_objdump} -p $armcheck/t.exe | grep -i 'libintl-8.dll'
+
+# Static: the same program against ucrtarm64-gettext-static, which must not end
+# up importing the DLL.  libintl.a pulls in iconv, which stays shared here.
+%{ucrtarm64_cc} -I%{buildroot}%{ucrtarm64_includedir} $armcheck/t.c \
+    -L%{buildroot}%{ucrtarm64_libdir} -Wl,-Bstatic -lintl -Wl,-Bdynamic \
+    -liconv -o $armcheck/t-static.exe
+%{ucrtarm64_objdump} -f $armcheck/t-static.exe
+%{ucrtarm64_objdump} -f $armcheck/t-static.exe | grep -q 'file format coff-arm64'
+! %{ucrtarm64_objdump} -p $armcheck/t-static.exe | grep -i 'libintl-8.dll'
+
+rm -rf $armcheck
 
 
 # Win32
@@ -245,8 +430,60 @@ rm %{buildroot}%{mingw64_datadir}/gettext/javaversion.class
 %{mingw64_libdir}/libintl.a
 %{mingw64_libdir}/libtextstyle.a
 
+# Windows on ARM64
+%files -n ucrtarm64-gettext -f ucrtarm64-%{name}.lang
+%license COPYING
+%{ucrtarm64_bindir}/autopoint
+%{ucrtarm64_bindir}/envsubst.exe
+%{ucrtarm64_bindir}/gettext.exe
+%{ucrtarm64_bindir}/gettext.sh
+%{ucrtarm64_bindir}/gettextize
+%{ucrtarm64_bindir}/libasprintf-0.dll
+%{ucrtarm64_bindir}/libgettextlib-0-26.dll
+%{ucrtarm64_bindir}/libgettextpo-0.dll
+%{ucrtarm64_bindir}/libgettextsrc-0-26.dll
+%{ucrtarm64_bindir}/libintl-8.dll
+%{ucrtarm64_bindir}/libtextstyle-0.dll
+%{ucrtarm64_bindir}/msg*.exe
+%{ucrtarm64_bindir}/ngettext.exe
+%{ucrtarm64_bindir}/printf_gettext.exe
+%{ucrtarm64_bindir}/printf_ngettext.exe
+%{ucrtarm64_bindir}/recode-sr-latin.exe
+%{ucrtarm64_bindir}/xgettext.exe
+%{ucrtarm64_includedir}/autosprintf.h
+%{ucrtarm64_includedir}/gettext-po.h
+%{ucrtarm64_includedir}/libintl.h
+%{ucrtarm64_includedir}/textstyle.h
+%{ucrtarm64_includedir}/textstyle/stdbool.h
+%{ucrtarm64_includedir}/textstyle/version.h
+%{ucrtarm64_includedir}/textstyle/woe32dll.h
+%{ucrtarm64_libdir}/libasprintf.dll.a
+%{ucrtarm64_libdir}/libgettextlib.dll.a
+%{ucrtarm64_libdir}/libgettextpo.dll.a
+%{ucrtarm64_libdir}/libgettextsrc.dll.a
+%{ucrtarm64_libdir}/libintl.dll.a
+%{ucrtarm64_libdir}/libtextstyle.dll.a
+%dir %{ucrtarm64_libexecdir}/gettext/
+%{ucrtarm64_libexecdir}/gettext/cldr-plurals.exe
+%{ucrtarm64_libexecdir}/gettext/hostname.exe
+%{ucrtarm64_libexecdir}/gettext/project-id
+%{ucrtarm64_libexecdir}/gettext/urlget.exe
+%{ucrtarm64_libexecdir}/gettext/user-email
+%{ucrtarm64_datadir}/gettext/
+%{ucrtarm64_datadir}/gettext-%{version}/
+%{ucrtarm64_datadir}/aclocal/nls.m4
+
+%files -n ucrtarm64-gettext-static
+%{ucrtarm64_libdir}/libasprintf.a
+%{ucrtarm64_libdir}/libgettextpo.a
+%{ucrtarm64_libdir}/libintl.a
+%{ucrtarm64_libdir}/libtextstyle.a
+
 
 %changelog
+* Thu Aug 06 2026 Erik Berg <fedora@slipsprogrammor.no> - 0.26-2.2
+- Add gettext for the Windows on ARM64 target
+
 * Thu Aug 06 2026 Erik Berg <fedora@slipsprogrammor.no> - 0.26-2.1
 - Fix the Fedora 44 FTBFS: pass -fno-optimize-strlen to the GCC targets
   (mingw32-gcc 16.1.1-1.fc44 ICEs in the GIMPLE strlen pass on
