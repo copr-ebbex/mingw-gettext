@@ -11,7 +11,7 @@
 
 Name:      mingw-gettext
 Version:   1.0
-Release:   2.2%{?dist}
+Release:   2.3%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPL-2.0-or-later AND LGPL-2.0-or-later
@@ -395,6 +395,7 @@ rm -rf $armcheck
 %files -n mingw32-gettext-libs
 %license COPYING
 %{mingw32_bindir}/libintl-8.dll
+%{mingw32_libdir}/libintl.dll.a
 
 %files -n mingw32-gettext -f mingw32-%{name}.lang
 %license COPYING
@@ -426,7 +427,6 @@ rm -rf $armcheck
 %{mingw32_libdir}/libgettextlib.dll.a
 %{mingw32_libdir}/libgettextpo.dll.a
 %{mingw32_libdir}/libgettextsrc.dll.a
-%{mingw32_libdir}/libintl.dll.a
 %{mingw32_libdir}/libtextstyle.dll.a
 %dir %{mingw32_libexecdir}/gettext/
 %{mingw32_libexecdir}/gettext/cldr-plurals.exe
@@ -448,6 +448,7 @@ rm -rf $armcheck
 %files -n mingw64-gettext-libs
 %license COPYING
 %{mingw64_bindir}/libintl-8.dll
+%{mingw64_libdir}/libintl.dll.a
 
 %files -n mingw64-gettext -f mingw64-%{name}.lang
 %license COPYING
@@ -479,7 +480,6 @@ rm -rf $armcheck
 %{mingw64_libdir}/libgettextlib.dll.a
 %{mingw64_libdir}/libgettextpo.dll.a
 %{mingw64_libdir}/libgettextsrc.dll.a
-%{mingw64_libdir}/libintl.dll.a
 %{mingw64_libdir}/libtextstyle.dll.a
 %dir %{mingw64_libexecdir}/gettext/
 %{mingw64_libexecdir}/gettext/cldr-plurals.exe
@@ -501,6 +501,7 @@ rm -rf $armcheck
 %files -n ucrtarm64-gettext-libs
 %license COPYING
 %{ucrtarm64_bindir}/libintl-8.dll
+%{ucrtarm64_libdir}/libintl.dll.a
 
 %files -n ucrtarm64-gettext -f ucrtarm64-%{name}.lang
 %license COPYING
@@ -532,7 +533,6 @@ rm -rf $armcheck
 %{ucrtarm64_libdir}/libgettextlib.dll.a
 %{ucrtarm64_libdir}/libgettextpo.dll.a
 %{ucrtarm64_libdir}/libgettextsrc.dll.a
-%{ucrtarm64_libdir}/libintl.dll.a
 %{ucrtarm64_libdir}/libtextstyle.dll.a
 %dir %{ucrtarm64_libexecdir}/gettext/
 %{ucrtarm64_libexecdir}/gettext/cldr-plurals.exe
@@ -552,6 +552,11 @@ rm -rf $armcheck
 
 
 %changelog
+* Mon Aug 24 2026 Erik Berg <fedora@slipsprogrammor.no> - 1.0-2.3
+- Move libintl.dll.a into the -libs subpackages next to the DLL: glib's
+  pkg-config file puts -lintl on every consumer's public link line, so
+  a buildroot holding only the runtime split must still satisfy it
+
 * Mon Aug 24 2026 Erik Berg <fedora@slipsprogrammor.no> - 1.0-2.2
 - Build the win32/win64 C halves with the clang supplement drivers, so
   libintl-8.dll (the one gettext DLL the qemu-ga MSI ships) carries no
