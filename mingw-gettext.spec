@@ -1,10 +1,17 @@
 # Windows on ARM64, clang/lld based.  Must precede %%mingw_package_header.
 %global mingw_build_ucrtarm64 1
+# win32/win64: C builds with the clang supplement drivers, so libintl-8.dll
+# (the one DLL the qemu-ga MSI ships) carries no GNU runtime imports.  The
+# C++ parts (woe32dll/c++*.cc, autosprintf.cc) stay on g++ and libstdc++:
+# there is no libc++ for these targets, and none of those DLLs are shipped
+# in the MSI.
+%global mingw_toolchain_win32 clang
+%global mingw_toolchain_win64 clang
 %{?mingw_package_header}
 
 Name:      mingw-gettext
 Version:   0.26
-Release:   2.2%{?dist}
+Release:   2.3%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPL-2.0-or-later AND LGPL-2.0-or-later
@@ -14,14 +21,23 @@ Source0:   https://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
 BuildArch: noarch
 
 BuildRequires: make
-BuildRequires: mingw32-filesystem >= 95
+# The win32/win64 clang columns dispatch to the supplement drivers only from
+# 152-1.9 on.  gcc-c++ stays: the C++ parts build with g++ (see the toolchain
+# comment above), and GNU windres finds its <triplet>-gcc preprocessor again.
+BuildRequires: mingw32-filesystem >= 152-1.9
+BuildRequires: mingw32-clang
+BuildRequires: mingw32-compiler-rt >= 22.1.8
+BuildRequires: mingw32-libunwind >= 22.1.8
 BuildRequires: mingw32-gcc
 BuildRequires: mingw32-gcc-c++
 BuildRequires: mingw32-binutils
 BuildRequires: mingw32-win-iconv
 BuildRequires: mingw32-termcap
 
-BuildRequires: mingw64-filesystem >= 95
+BuildRequires: mingw64-filesystem >= 152-1.9
+BuildRequires: mingw64-clang
+BuildRequires: mingw64-compiler-rt >= 22.1.8
+BuildRequires: mingw64-libunwind >= 22.1.8
 BuildRequires: mingw64-gcc
 BuildRequires: mingw64-gcc-c++
 BuildRequires: mingw64-binutils
@@ -66,8 +82,18 @@ MinGW Windows Gettext library
 
 
 # Win32
+%package -n mingw32-gettext-libs
+Summary:         Runtime libintl for the win32 target
+
+%description -n mingw32-gettext-libs
+The gettext runtime DLL (libintl-8.dll) for the win32 target, split out so
+that a package whose DLLs only need libintl does not drag in the gettext
+tools and their GNU runtime dependencies (the Fedora native gettext-libs
+precedent).
+
 %package -n mingw32-gettext
 Summary:         GNU libraries and utilities for producing multi-lingual messages
+Requires:        mingw32-gettext-libs = %{version}-%{release}
 
 %description -n mingw32-gettext
 MinGW Windows Gettext library
@@ -80,8 +106,18 @@ Requires:       mingw32-gettext = %{version}-%{release}
 Static version of the MinGW Windows Gettext library.
 
 # Win64
+%package -n mingw64-gettext-libs
+Summary:         Runtime libintl for the win64 target
+
+%description -n mingw64-gettext-libs
+The gettext runtime DLL (libintl-8.dll) for the win64 target, split out so
+that a package whose DLLs only need libintl does not drag in the gettext
+tools and their GNU runtime dependencies (the Fedora native gettext-libs
+precedent).
+
 %package -n mingw64-gettext
 Summary:         GNU libraries and utilities for producing multi-lingual messages
+Requires:        mingw64-gettext-libs = %{version}-%{release}
 
 %description -n mingw64-gettext
 MinGW Windows Gettext library
@@ -94,8 +130,17 @@ Requires:       mingw64-gettext = %{version}-%{release}
 Static version of the MinGW Windows Gettext library.
 
 # Windows on ARM64
+%package -n ucrtarm64-gettext-libs
+Summary:         Runtime libintl for the Windows on ARM64 target
+
+%description -n ucrtarm64-gettext-libs
+The gettext runtime DLL (libintl-8.dll) for the aarch64-w64-mingw32 target,
+split out so that a package whose DLLs only need libintl does not drag in
+the gettext tools (the Fedora native gettext-libs precedent).
+
 %package -n ucrtarm64-gettext
 Summary:         GNU libraries and utilities for producing multi-lingual messages
+Requires:        ucrtarm64-gettext-libs = %{version}-%{release}
 
 %description -n ucrtarm64-gettext
 MinGW Windows Gettext library for the Windows on ARM64 target.
@@ -133,12 +178,11 @@ for c in gettext-runtime/configure gettext-runtime/libasprintf/configure \
 done
 
 %build
-# Fedora 44's mingw32-gcc 16.1.1-1.fc44 ICEs in the GIMPLE strlen pass on
-# gettext-tools/gnulib-lib/localename-unsafe.c (both GCC targets; rawhide's
-# 16.1.1-3.fc45 is fixed).  Reproduced against unmodified dist-git HEAD.
-# Turn the crashing pass off; drop when f44 gets a fixed mingw-gcc.
-MINGW32_CFLAGS="%{mingw32_cflags} -fno-optimize-strlen"
-MINGW64_CFLAGS="%{mingw64_cflags} -fno-optimize-strlen"
+# The old -fno-optimize-strlen workaround is gone: Fedora 44's mingw-gcc
+# 16.1.1-1.fc44 ICEs in the GIMPLE strlen pass on the C file
+# gnulib-lib/localename-unsafe.c, but C now compiles with the clang
+# drivers, which have no such pass (and reject the GCC-only flag); g++
+# only sees the C++ files, where the ICE never fired.
 # pass_all for ucrtarm64 only: libtool's func_win32_libid file-magic test
 # predates AArch64 PE, rejects every import library, and with -no-undefined
 # silently degrades all the DLLs to static-only.  A plain argument reaches
@@ -146,8 +190,17 @@ MINGW64_CFLAGS="%{mingw64_cflags} -fno-optimize-strlen"
 # ac_cv_search_nanosleep: the clang drivers do not auto-link libwinpthread
 # the way the posix-threaded gcc does, and gnulib's plain nanosleep
 # replacement collides with mingw-w64 13.0.0's inline one; libwinpthread
-# really exports the symbol.  Not needed on 14.0.0.
+# really exports the symbol.  Not needed on 14.0.0.  With the win32/win64
+# columns on the clang drivers it now applies to every clang target.
+MINGW32_CONFIGURE_ARGS="ac_cv_search_nanosleep=-lwinpthread"
+MINGW64_CONFIGURE_ARGS="ac_cv_search_nanosleep=-lwinpthread"
 UCRTARM64_CONFIGURE_ARGS="lt_cv_deplibs_check_method=pass_all ac_cv_search_nanosleep=-lwinpthread"
+# The clang columns supply CC; C++ stays on g++ with the gcc-flavoured
+# flags (the clang cflags carry -Qunused-arguments, which g++ rejects).
+MINGW32_CXX=i686-w64-mingw32-g++
+MINGW64_CXX=x86_64-w64-mingw32-g++
+MINGW32_CXXFLAGS="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions --param=ssp-buffer-size=4"
+MINGW64_CXXFLAGS="$MINGW32_CXXFLAGS"
 # gettext 0.26's gnulib includes C23 <stdcountof.h> from C++, where _Countof
 # does not exist; mask the header for every target (shared argument list).
 %mingw_configure            \
@@ -329,10 +382,52 @@ EOF
 %{ucrtarm64_objdump} -f $armcheck/t-static.exe | grep -q 'file format coff-arm64'
 ! %{ucrtarm64_objdump} -p $armcheck/t-static.exe | grep -i 'libintl-8.dll'
 
+# 5. libintl-8.dll is the one gettext DLL the qemu-ga MSI ships, from clang
+#    toolchain sysroots where the GNU runtime DLLs do not exist: it must be
+#    clang-linked and import no libgcc, libssp or libunwind.  The other x86
+#    DLLs stay g++-linked (see %%build) and keep their libstdc++/libgcc
+#    imports, which is why libintl lives in the -libs subpackage.  The same
+#    consumer links through the clang drivers.
+for t in i686-w64-mingw32 x86_64-w64-mingw32 ; do
+  case $t in
+    i686-*)
+      wbin_rel=%{mingw32_bindir}
+      wlibdir=%{buildroot}%{mingw32_libdir}
+      wincdir=%{buildroot}%{mingw32_includedir}
+      peformat=pei-i386
+      ;;
+    x86_64-*)
+      wbin_rel=%{mingw64_bindir}
+      wlibdir=%{buildroot}%{mingw64_libdir}
+      wincdir=%{buildroot}%{mingw64_includedir}
+      peformat=pei-x86-64
+      ;;
+  esac
+  wbindir=%{buildroot}$wbin_rel
+
+  $t-objdump -f $wbindir/libintl-8.dll | grep -q "file format $peformat"
+  $t-objdump -h $wbindir/libintl-8.dll | grep -q '\.gnu_debuglink'
+  test -f %{buildroot}%{_prefix}/lib/debug$wbin_rel/libintl-8.dll.debug
+  imports=$($t-objdump -p $wbindir/libintl-8.dll | grep 'DLL Name' || :)
+  echo "$t libintl-8.dll imports: $imports"
+  if echo "$imports" | grep -qiE 'libgcc|libssp|libunwind|libstdc'; then
+    echo "ERROR: $t libintl-8.dll imports a GNU runtime or unwinder DLL" >&2
+    exit 1
+  fi
+
+  $t-clang -I$wincdir $armcheck/t.c -L$wlibdir -lintl -o $armcheck/t-$t.exe
+  $t-objdump -f $armcheck/t-$t.exe | grep -q "file format $peformat"
+  $t-objdump -p $armcheck/t-$t.exe | grep -i 'libintl-8.dll'
+done
+
 rm -rf $armcheck
 
 
 # Win32
+%files -n mingw32-gettext-libs
+%license COPYING
+%{mingw32_bindir}/libintl-8.dll
+
 %files -n mingw32-gettext -f mingw32-%{name}.lang
 %license COPYING
 %{mingw32_bindir}/autopoint
@@ -344,7 +439,6 @@ rm -rf $armcheck
 %{mingw32_bindir}/libgettextlib-0-26.dll
 %{mingw32_bindir}/libgettextpo-0.dll
 %{mingw32_bindir}/libgettextsrc-0-26.dll
-%{mingw32_bindir}/libintl-8.dll
 %{mingw32_bindir}/libtextstyle-0.dll
 %{mingw32_bindir}/msg*.exe
 %{mingw32_bindir}/ngettext.exe
@@ -382,6 +476,10 @@ rm -rf $armcheck
 %{mingw32_libdir}/libtextstyle.a
 
 # Win64
+%files -n mingw64-gettext-libs
+%license COPYING
+%{mingw64_bindir}/libintl-8.dll
+
 %files -n mingw64-gettext -f mingw64-%{name}.lang
 %license COPYING
 %{mingw64_bindir}/autopoint
@@ -393,7 +491,6 @@ rm -rf $armcheck
 %{mingw64_bindir}/libgettextlib-0-26.dll
 %{mingw64_bindir}/libgettextpo-0.dll
 %{mingw64_bindir}/libgettextsrc-0-26.dll
-%{mingw64_bindir}/libintl-8.dll
 %{mingw64_bindir}/libtextstyle-0.dll
 %{mingw64_bindir}/msg*.exe
 %{mingw64_bindir}/ngettext.exe
@@ -431,6 +528,10 @@ rm -rf $armcheck
 %{mingw64_libdir}/libtextstyle.a
 
 # Windows on ARM64
+%files -n ucrtarm64-gettext-libs
+%license COPYING
+%{ucrtarm64_bindir}/libintl-8.dll
+
 %files -n ucrtarm64-gettext -f ucrtarm64-%{name}.lang
 %license COPYING
 %{ucrtarm64_bindir}/autopoint
@@ -442,7 +543,6 @@ rm -rf $armcheck
 %{ucrtarm64_bindir}/libgettextlib-0-26.dll
 %{ucrtarm64_bindir}/libgettextpo-0.dll
 %{ucrtarm64_bindir}/libgettextsrc-0-26.dll
-%{ucrtarm64_bindir}/libintl-8.dll
 %{ucrtarm64_bindir}/libtextstyle-0.dll
 %{ucrtarm64_bindir}/msg*.exe
 %{ucrtarm64_bindir}/ngettext.exe
@@ -481,6 +581,16 @@ rm -rf $armcheck
 
 
 %changelog
+* Mon Aug 24 2026 Erik Berg <fedora@slipsprogrammor.no> - 0.26-2.3
+- Build the win32/win64 C halves with the clang supplement drivers, so
+  libintl-8.dll (the one gettext DLL the qemu-ga MSI ships) carries no
+  GNU runtime imports; the C++ parts stay on g++ and libstdc++, as no
+  libc++ is packaged for these targets
+- Split libintl-8.dll into per-target -libs subpackages (the Fedora
+  native gettext-libs precedent): the tools DLLs import libgcc, so a
+  package whose DLLs only need libintl no longer drags mingw-gcc into
+  its install closure
+
 * Thu Aug 06 2026 Erik Berg <fedora@slipsprogrammor.no> - 0.26-2.2
 - Add gettext for the Windows on ARM64 target
 
